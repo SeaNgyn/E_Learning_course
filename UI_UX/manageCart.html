@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LAT Home</title>
+    <!-- Link Swiper's CSS -->
+    <link rel="icon" type="image/png" href="./img/logoTab.jpg">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"
+        integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="./responsive.css">
+    <link rel="stylesheet" href="./manage.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+
+        <style>
+          .course-payment-table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-top: 20px;
+          }
+          .course-payment-table th, .course-payment-table td {
+              border: 1px solid #ddd;
+              padding: 10px;
+              text-align: center; 
+          }
+          .course-payment-table th {
+              background-color: #f0f0f0;
+              color: #333;
+          }
+          .course-payment-table tbody tr:nth-child(even) {
+              background-color: #f9f9f9;
+          }
+          .status-cancelled {
+              color: orange; 
+              font-weight: bold; 
+          }
+          .status-failed {
+              color: red; 
+              font-weight: bold; 
+          }
+          .status-success {
+              color: green; 
+              font-weight: bold; 
+          }
+      </style>
+
+</head>
+
+<body>
+    <div id="header">
+        <nav class="container">
+            <div class="nav_menu-btn">
+                <i class="fa-solid fa-bars"></i>
+            </div>
+            <a href="http://127.0.0.1:5501/index.html" class="logo">
+                <h2 class="logo_name">LATdev</h2>
+            </a>
+            <div class="nav_search">
+                <i class="fa-solid fa-magnifying-glass nav_search-searchBtn"></i>
+                <input type="text" placeholder="Tìm kiếm khóa học, bài viết, video..." class="input_box">
+                <i class="fa-solid fa-xmark nav_search-removeBtn"></i>
+            </div>
+
+            <div class="nav_menu-user">
+                <div class="nav_menu-user-notifi">
+                    <i class="fa-solid fa-bell"></i>
+                </div>
+                <div class="nav_menu-user-account">
+                    <div class="account-image">
+                        <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png"
+                            alt="">
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <div id="content">
+        <div class="row">
+            <div class="col-xl-2">
+                <!-- nav menu -->
+                <div class="nav_menu w-100">
+                    <div class="nav_overlay"></div>
+                    <div class="nav_menu-account">
+                        <div class="nav_menu-account-img">
+                            <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png"
+                                alt="">
+                        </div>
+                        <div class="nav_menu-account-name">
+                            <span>TienDZ</span>
+                        </div>
+                    </div>
+                    <div class="nav_menu-list-wrap">
+                        <ul class="nav_menu-list">
+                            <li class="nav_menu-list-item">
+                                <a href="">
+                                    <i class="fa-solid fa-user"></i>
+                                    <span>Trang cá nhân</span>
+                                </a>
+                            <!-- <li class="nav_menu-list-item">
+                                <a href="">
+                                    <i class="fa-solid fa-book-open"></i>
+                                    <span>Khóa học của tôi</span>
+                                </a>
+                            </li> -->
+                            </li>
+                        </ul>
+                        <ul class="nav_menu-list">
+                            <li class="nav_menu-list-item">
+                                <a href="">
+                                    <i class="fa-solid fa-house"></i>
+                                    <span>Trang chủ</span>
+                                </a>
+                            </li>
+                            <li class="nav_menu-list-item nav-item_active">
+                                <a href="">
+                                    <i class="fa-solid fa-cart-shopping"></i>
+                                    <span>Thanh toán </span>
+                                </a>
+                            </li>
+                            <li class="nav_menu-list-item">
+                                <a href="">
+                                    <i class="fa-solid fa-chalkboard-user"></i>
+                                    <span>Nhân sự</span>
+                                </a>
+                            </li>
+                            <li class="nav_menu-list-item">
+                                <a href="">
+                                    <i class="fa-solid fa-graduation-cap"></i>
+                                    <span>Học sinh</span>
+                                </a>
+                            </li>
+                        </ul>
+                        <ul class="nav_menu-list">
+                            <li class="nav_menu-list-item">
+                                <a href="">
+                                    <i class="fa-solid fa-bookmark"></i>
+                                    <span>Bìa viết đã lưu</span>
+                                </a>
+                            </li>
+                        </ul>
+                        <ul class="nav_menu-list">
+                            <li class="nav_menu-list-item">
+                                <a href="">
+                                    <i class="fa-solid fa-circle-info"></i>
+                                    <span>Giới thiệu</span>
+                                </a>
+                            </li>
+                            <li class="nav_menu-list-item">
+                                <a href="">
+                                    <i class="fa-solid fa-users"></i>
+                                    <span>Cơ hội việc làm</span>
+                                </a>
+                            </li>
+                            <li class="nav_menu-list-item setting_account-btn">
+                                <a href="">
+                                    <i class="fa-solid fa-laptop-code"></i>
+                                    <span>Cài đặt </span>
+                                </a>
+                                <ul class="nav_menu-subList">
+                                    <li class="nav_menu-list-item">
+                                        <a href="">
+                                            <span>Cài đặt tài khoản</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav_menu-list-item">
+                                        <a href="">
+                                            <span>Bảo mật đăng nhập</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav_menu-list-item">
+                                        <a href="">
+                                            <span>Thông báo</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav_menu-list-item">
+                                        <a href="">
+                                            <span>Quản lý tiếp thị liên kết</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <ul class="nav_menu-list">
+                            <li class="nav_menu-list-item">
+                                <a href="">
+                                    <i class="fa-solid fa-right-from-bracket"></i>
+                                    <span>Đăng xuất</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-10">
+                <div class="popular-courses">
+                    <h2 class="courses-title mt-5 px-5">Quản lí thanh toán</h2>
+                    <div class="popular-header px-5">
+                        <p class="popular-des">Học sáng tạo, thành công vượt trội</p>
+                    </div>
+                    <div class="row mt-4 px-5">
+                        <div class="col-6 d-flex align-items-center">
+                            <span class="fs-3 me-3">Show</span>
+                            <select class="drop-show_number">
+                                <option value="">5</option>
+                                <option value="">10</option>
+                                <option value="">15</option>
+                            </select>
+                            <span class="fs-3 ms-3">Transactions</span>
+                        </div>
+                        <div class="col-6">
+                            <div class="d-flex align-items-center justify-content-end">
+                                <div class="">
+                                    <div class="sort-btn_manager">
+                                        <span class="sort-title">Sort by</span>
+                                        <i class="fa-solid fa-sort"></i>
+                                        <div class="sort_fields">
+                                            <ul>
+                                                <li>
+                                                    <input type="radio" name="sortBy" id="name" />
+                                                    <label for="name"><span>Name</span></label>
+                                                </li>
+                                                <li>
+                                                    <input type="radio" name="sortBy" id="price" />
+                                                    <label for="price"><span>Price</span></label>
+                                                </li>
+                                                <li>
+                                                    <input type="radio" name="sortBy" id="view" />
+                                                    <label for="view"><span>View</span></label>
+                                                </li>
+                                                <li>
+                                                    <input type="radio" name="sortBy" id="date" />
+                                                    <label for="date"><span>Date</span></label>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <div class="">
+                                    <!-- <div class="filter-btn_manager">
+                                        <span class="filter-title">Filter</span>
+                                        <i class="fa-solid fa-filter"></i>
+                                    </div> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="container mt-5">
+                      <div class="courses-container">
+                        <table class="course-payment-table">
+                            <thead>
+                                <tr>
+                                    <th>Ngày tháng</th>
+                                    <th>Mã đơn hàng</th>
+                                    <th>Tiền Khóa học</th>
+                                    <th>Khách hàng chịu phí</th>
+                                    <th>Tổng tiền thanh toán</th>
+                                    <th>Phí giao dịch</th>
+                                    <th>Trạng thái giao dịch</th>
+                                    <th>Mã giao dịch</th>
+                                    <th>Mã khách hàng</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>02/10/2024 10:22:54</td>
+                                    <td>abcd</td>
+                                    <td>500.000</td>
+                                    <td>-</td>
+                                    <td>500.000</td>
+                                    <td>-</td>
+                                    <td class="status-cancelled">Hủy giao dịch</td>
+                                    <td>tiendz</td>
+                                    <td>-</td>
+                                </tr>
+                                <tr>
+                                    <td>02/10/2024 10:22:54</td>
+                                    <td>abcd</td>
+                                    <td>50.000</td>
+                                    <td>-</td>
+                                    <td>50.000</td>
+                                    <td>-</td>
+                                    <td class="status-success">Thành công</td>
+                                    <td>tiendz</td>
+                                    <td>-</td>
+                                </tr>
+                                <tr>
+                                    <td>02/10/2024 10:22:54</td>
+                                    <td>abcd</td>
+                                    <td>50.000</td>
+                                    <td>-</td>
+                                    <td>50.000</td>
+                                    <td>-</td>
+                                    <td class="status-failed">Thất bại</td>
+                                    <td>tiendz</td>
+                                    <td>-</td>
+                                </tr>
+                                <tr>
+                                    <td>02/10/2024 10:22:54</td>
+                                    <td>abcd</td>
+                                    <td>200.000</td>
+                                    <td>-</td>
+                                    <td>200.000</td>
+                                    <td>-</td>
+                                    <td class="status-failed">Thất bại</td>
+                                    <td>tiendz</td>
+                                    <td>-</td>
+                                </tr>
+                                <tr>
+                                    <td>02/10/2024 10:22:54</td>
+                                    <td>abcd</td>
+                                    <td>200.000</td>
+                                    <td>-</td>
+                                    <td>200.000</td>
+                                    <td>-</td>
+                                    <td class="status-failed">Thất bại</td>
+                                    <td>tiendz</td>
+                                    <td>-</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                        <div class="">
+                            <ul class="d-flex align-items-center pagination">
+                                <Li class="pagination-btn">
+                                    <a href="">
+                                        <i class="fa-solid fa-chevron-left"></i>
+                                    </a>
+                                </Li>
+                                <Li class="pagination-btn"><a href="">1</a></Li>
+                                <Li class="pagination-btn"><a href="">2</a></Li>
+                                <Li class="pagination-btn"><a href="">3</a></Li>
+                                <Li class="pagination-btn">
+                                    <a href="">
+                                        <i class="fa-solid fa-chevron-right"></i>
+                                    </a>
+                                </Li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <a href="#" id="scroll-top">
+        <i class="fa-sharp fa-solid fa-shuttle-space icon-scroll"></i>
+    </a>
+    <div id="footer" class="px-5">
+        <div class="footer-wrapper">
+            <div class="footer-col col-20 col-full mb-30">
+                <h3 class="footer__logo">
+                    <a href="">TVCdev</a>
+                </h3>
+                <p class="footer__des">Nullam nisi magna, tempor vita nulla sed,
+                    portal sodaless tortor Aenean at sodaless portals.</p>
+                <div class="footer__social">
+                    <a href="" class="footer__icon"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="" class="footer__icon"><i class="fa-brands fa-twitter"></i></a>
+                    <a href="" class="footer__icon"><i class="fa-brands fa-vimeo-v"></i></a>
+                    <a href="" class="footer__icon"><i class="fa-brands fa-linkedin-in"></i></a>
+                </div>
+            </div>
+            <div class="footer-col mt-30 ">
+                <h3 class="footer-col__header">Links</h3>
+                <ul class="footer-col__links">
+                    <li><a href="">Home</a></li>
+                    <li><a href="">About Us</a></li>
+                    <li><a href="">Our Process</a></li>
+                    <li><a href="">Services</a></li>
+                </ul>
+            </div>
+            <div class="footer-col mt-30">
+                <h3 class="footer-col__header">Community</h3>
+                <ul class="footer-col__links">
+                    <li><a href="">Go Premium</a></li>
+                    <li><a href="">Team Plans</a></li>
+                    <li><a href="">Refer a Friend</a></li>
+                    <li><a href="">Gift Cards</a></li>
+                </ul>
+            </div>
+            <div class="footer-col mt-30">
+                <h3 class="footer-col__header">Resources</h3>
+                <ul class="footer-col__links">
+                    <li><a href="">Support</a></li>
+                    <li><a href="">Latest Update</a></li>
+                    <li><a href="">Updates Newletter</a></li>
+                    <li><a href="">Flow Management</a></li>
+                </ul>
+            </div>
+            <div class="footer-col mt-30">
+                <div class="footer__app">
+                    <a href="" class="">
+                        <img src="./img/chPlay-app.png" alt="">
+                    </a>
+                    <a href="" class="">
+                        <img src="./img/appStore-app.png" alt="">
+                    </a>
+                </div>
+                <div class="footer__certificate">
+                    <a href="">
+                        <img src="./img/dmca_logo.png" alt="">
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-copyright">
+            <p>Copyright Cuong tran TVCdev 24/2/2023, All right Reserved</p>
+        </div>
+    </div>
+</body>
+<script>
+    function actionNavMenu() {
+        let settingAccountBtn = document.querySelector('.setting_account-btn')
+        let subMenu = document.querySelector('.nav_menu-subList')
+        let navLinks = document.querySelectorAll('.nav_menu-list-item a')
+        console.log(navLinks);
+        let openNavBtn = document.querySelector('.nav_menu-btn')
+        let navMenu = document.querySelector('.nav_menu')
+        let menuNavOverLay = document.querySelector('.nav_overlay')
+        openNavBtn.addEventListener('click', () => {
+            navMenu.classList.toggle('openNavMenu')
+        })
+        menuNavOverLay.addEventListener('click', () => {
+            navMenu.classList.toggle('openNavMenu')
+        })
+        settingAccountBtn.addEventListener('click', () => {
+            subMenu.classList.toggle('showSubList')
+            settingAccountBtn.classList.toggle('changeIcon')
+        })
+        navLinks.forEach((link) => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault()
+            })
+        })
+    }
+    actionNavMenu()
+</script>
+<!-- Swiper JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+<script>
+    var swiper = new Swiper(".mySwiper", {
+        navigation: {
+            nextEl: ".swiper-button-next",
+            prevEl: ".swiper-button-prev",
+        },
+        spaceBetween: 30,
+        centeredSlides: true,
+        speed: 1500,
+        loop: true,
+        autoplay: {
+            delay: 3000,
+            disableOnInteraction: false,
+        },
+        pagination: {
+            el: ".swiper-pagination",
+            clickable: true,
+        }
+    });
+</script>
+
+</html>

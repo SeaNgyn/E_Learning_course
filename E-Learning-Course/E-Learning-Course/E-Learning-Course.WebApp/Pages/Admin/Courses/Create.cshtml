@@ -1,0 +1,275 @@
+﻿@page
+@model E_Learning_Course.WebApp.Pages.Admin.Courses.CreateModel
+@{
+    Layout = "_ManagementLayout";
+}
+<div class="popular-courses">
+    <div class="mt-5">
+        <a class="ms-5 text-decoration-none fs-2 p-0 back__page-btn" href="./List">
+            <span><i class="fa-solid fa-caret-left"></i></span>
+            <span class="">Quản lý khóa học</span>
+        </a>
+    </div>
+    <h2 class="courses-title mt-5 px-5">Điều hành khóa học</h2>
+    <div class="popular-header px-5">
+        <p class="popular-des">Học sáng tạo, thành công vượt trội</p>
+        <!-- <button class="popular-button">Add course</button> -->
+    </div>
+    <h2>
+        @Model.Mess
+    </h2>
+    <div id="spinner" style="display: none;">
+        <div class="loading-spinner"></div>
+    </div>
+    <div id="successMessage" style="display: none; color: green;">Submit thành công!</div>
+    <div class="container mt-5">
+        <div class="courses-container">
+
+            <!-- video form -->
+            <form id="createForm" method="post" style="margin: 20px;" enctype="multipart/form-data">
+                <label class="form-label fs-4">Video giới thiệu</label>
+                 <div class="mb-3 box-upload_file">
+                     <div id="dropArea" class="drop-area">
+                        <input type="file" id="videoUpload" accept="video/*" asp-for="CourseForCreation.PreviewVideo" class="file-input" style="display: none;">
+                         <div id="uploadIcon" class="upload-icon">
+                             <i class="fa-solid fa-upload"></i>
+                             <p>Kéo thả video vào đây hoặc click để chọn</p>
+                         </div>
+                         <video id="videoPreview" width="100%" controls style="display: none;"></video>
+                     </div>
+                    <span asp-validation-for="@Model.CourseForCreation.PreviewVideo" class="text-danger mb-3 fs-4"></span>
+                 </div>
+
+                <label class="form-label fs-4">Ảnh</label>
+
+                <div class="mb-3 box-upload_file">
+                    <div id="dropAreaImage"  class="drop-area">
+                        <input type="file" id="imageUpload" accept="image/*" asp-for="CourseForCreation.Thumbnail"  class="file-input" style="display: none;">
+                        <div id="uploadIconImage" class="upload-icon">
+                            <i class="fa-solid fa-upload"></i>
+                            <p>Kéo thả hình ảnh vào đây hoặc click để chọn</p>
+                        </div>
+                        <img id="imagePreview" width="100%" style="display: none;" />
+                    </div>
+                    <span asp-validation-for="@Model.CourseForCreation.Thumbnail" class="text-danger mb-3 fs-4"></span>
+                </div>
+
+                <div class="">
+                    <div class="progress_upload">
+                        <div class="progress-done_upload" data-done="70">70%</div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fs-4" asp-for="CourseForCreation.Title">Tiêu đề</label>
+                    <input type="text" class="form-control fs-3 p-2" asp-for="CourseForCreation.Title">
+                    <span asp-validation-for="@Model.CourseForCreation.Title" class="text-danger mb-3 fs-4"></span>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fs-4" asp-for="CourseForCreation.Price">Giá cả</label>
+                    <input type="number" class="form-control fs-3 p-2" asp-for="CourseForCreation.Price">
+                    <span asp-validation-for="@Model.CourseForCreation.Price" class="text-danger mb-3 fs-4"></span>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fs-4" asp-for="CourseForCreation.CategoryId">Danh mục</label>
+                    <select class="form-select form-select-lg mb-3 p-2 fs-3" asp-for="CourseForCreation.CategoryId" aria-label=".form-select-lg example">
+                        @foreach (var cate in Model.Categories)
+                        {
+                            <option value="@cate.Id">@cate.Name</option>
+                        }
+                    </select>
+                    <span asp-validation-for="@Model.CourseForCreation.CategoryId" class="text-danger mb-3 fs-4"></span>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fs-4" for="limitDayInput">Ngày tối đa hoàn thành khóa học</label>
+                    <input type="number" asp-for="CourseForCreation.LimitDay" class="form-control fs-3 p-2" placeholder="Enter the number of days">
+                    <span asp-validation-for="@Model.CourseForCreation.LimitDay" class="text-danger mb-3 fs-4"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fs-4" asp-for="CourseForCreation.Description">Mô tả chi tiết</label>
+                    <textarea id="default" type="text" class="form-control fs-3 p-2" asp-for="CourseForCreation.Description"></textarea>
+                    <span asp-validation-for="@Model.CourseForCreation.Description" class="text-danger mb-3 fs-4"></span>
+                </div>
+                <button type="submit" class="btn btn-primary fs-4 px-5 py-3">Add lesson</button>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+    <!-- Success Toast -->
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+        @if (TempData["ToastMessage"] != null)
+        {
+            string toastType = TempData["ToastType"] as string;
+            string toastClass = toastType == "success" ? "bg-success text-white" :
+            toastType == "fail" ? "bg-danger text-white" :
+            "bg-warning text-dark";
+            string headerText = toastType == "success" ? "Success" :
+            toastType == "fail" ? "Error" :
+            "Warning";
+            string btnCloseClass = toastType == "success" || toastType == "fail" ? "btn-close-white" : "btn-close-dark";
+
+            <div class="toast show align-items-center @toastClass border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+                <div class="toast-header @toastClass">
+                    <strong class="me-auto fs-4">@headerText</strong>
+                    <button type="button" class="btn-close @btnCloseClass ms-2 ms-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body bg-white text-dark py-3 fs-4">
+                    @TempData["ToastMessage"]
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var toastElement = document.querySelector('.toast.show');
+        if (toastElement) {
+            var toast = new bootstrap.Toast(toastElement);
+            toast.show();
+        }
+    })
+</script>
+
+<script>
+        $(document).ready(function() {
+            $('#createForm').on('submit', function (event) {
+                event.preventDefault(); 
+
+                $('#spinner').show();
+
+                $('#successMessage').hide();
+
+                $.ajax({
+                    type: 'POST',
+                    url: "AddCourse",
+                    data: $(this).serialize(),
+                    success: function (response) {
+                        $('#spinner').hide();
+
+                        $('#successMessage').show();
+                    },
+                    error: function (xhr, status, error) {
+                        // Xử lý lỗi
+                        console.log("Lỗi: " + error);
+                    }
+                });
+            });
+        });
+</script>
+
+<script src="~/tinymce/tinymce.min.js"></script>
+<script src="~/js/tinymceConfig.js"></script>
+<script src="https://cdn.ckeditor.com/4.14.0/standard/ckeditor.js"></script>
+
+<script>
+    // Khu vực upload video
+    const dropArea = document.getElementById('dropArea');
+    const fileInput = document.getElementById('videoUpload');
+    const videoPreview = document.getElementById('videoPreview');
+    const uploadIcon = document.getElementById('uploadIcon');
+
+    // Khu vực upload ảnh
+    const dropAreaImage = document.getElementById('dropAreaImage');
+    const fileInputImage = document.getElementById('imageUpload');
+    const imagePreview = document.getElementById('imagePreview');
+    const uploadIconImage = document.getElementById('uploadIconImage');
+
+    // Mở file dialog khi click vào khu vực drop (video)
+    dropArea.addEventListener('click', () => {
+        fileInput.click();
+    });
+
+    // Mở file dialog khi click vào khu vực drop (ảnh)
+    dropAreaImage.addEventListener('click', () => {
+        fileInputImage.click();
+    });
+
+    // Xử lý khi file được chọn hoặc kéo thả (video)
+    fileInput.addEventListener('change', handleFiles);
+    dropArea.addEventListener('dragover', (event) => {
+        event.preventDefault();
+        dropArea.classList.add('dragging');
+    });
+
+    dropArea.addEventListener('dragleave', () => {
+        dropArea.classList.remove('dragging');
+    });
+
+    dropArea.addEventListener('drop', (event) => {
+        event.preventDefault();
+        dropArea.classList.remove('dragging');
+        const files = event.dataTransfer.files;
+        handleFiles({ target: { files } });
+    });
+
+    function handleFiles(event) {
+        const file = event.target.files[0];
+
+        if (file && file.type.startsWith('video/')) {
+            const videoURL = URL.createObjectURL(file);
+            videoPreview.src = videoURL;
+            videoPreview.style.display = 'block';
+            uploadIcon.style.display = 'none'; // Ẩn icon sau khi upload
+        }
+    }
+
+    // Xử lý khi file được chọn hoặc kéo thả (ảnh)
+    fileInputImage.addEventListener('change', handleImageFiles);
+    dropAreaImage.addEventListener('dragover', (event) => {
+        event.preventDefault();
+        dropAreaImage.classList.add('dragging');
+    });
+
+    dropAreaImage.addEventListener('dragleave', () => {
+        dropAreaImage.classList.remove('dragging');
+    });
+
+    dropAreaImage.addEventListener('drop', (event) => {
+        event.preventDefault();
+        dropAreaImage.classList.remove('dragging');
+        const files = event.dataTransfer.files;
+        handleImageFiles({ target: { files } });
+    });
+
+    function handleImageFiles(event) {
+        const file = event.target.files[0];
+
+        if (file && file.type.startsWith('image/')) {
+            const imageURL = URL.createObjectURL(file);
+            imagePreview.src = imageURL;
+            imagePreview.style.display = 'block';
+            uploadIconImage.style.display = 'none'; // Ẩn icon sau khi upload
+        }
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+        const monthSelect = document.getElementById('monthSelect');
+        const daySelect = document.getElementById('daySelect');
+        const dayValidationMessage = document.getElementById('dayValidationMessage');
+
+        // Populate the day select element based on the month selected
+        monthSelect.addEventListener('change', () => {
+            const selectedMonth = parseInt(monthSelect.value);
+            daySelect.innerHTML = '<option value="">Select a day</option>'; // Reset days
+
+            let daysInMonth = 31; // Default max days
+
+            // Adjust days based on the selected month
+            if ([4, 6, 9, 11].includes(selectedMonth)) {
+                daysInMonth = 30; // April, June, September, November
+            } else if (selectedMonth === 2) {
+                daysInMonth = 28; // February
+            }
+
+            // Populate days
+            for (let day = 1; day <= daysInMonth; day++) {
+                const option = document.createElement('option');
+                option.value = day;
+                option.textContent = day;
+                daySelect.appendChild(option);
+            }
+        });
+    });
+
+</script>

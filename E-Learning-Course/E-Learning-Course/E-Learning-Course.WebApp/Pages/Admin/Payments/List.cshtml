@@ -1,0 +1,214 @@
+﻿@page
+@model E_Learning_Course.WebApp.Pages.Admin.Payments.ListModel
+@{
+    Layout = "_ManagementLayout";
+}
+
+
+
+<style>
+    .course-payment-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+        .course-payment-table th, .course-payment-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .course-payment-table th {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        .course-payment-table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+    .status-cancelled {
+        color: orange;
+        font-weight: bold;
+    }
+
+    .status-failed {
+        color: red;
+        font-weight: bold;
+    }
+
+    .status-success {
+        color: green;
+        font-weight: bold;
+    }
+
+
+    .filter-section {
+        display: flex;
+        align-items: flex-end;
+        gap: 20px;
+        padding: 10px;
+    }
+
+    .filter-item {
+        display: flex;
+        flex-direction: column;
+        width: 150px;
+    }
+
+        .filter-item label {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .filter-item .form-control {
+            font-size: 14px;
+            padding: 5px 10px;
+        }
+
+    .dropdown-status {
+        width: 120px;
+    }
+
+    .search-input {
+        width: 200px;
+    }
+
+</style>
+
+    <div class="popular-courses">
+        <h2 class="courses-title mt-5 px-5">Quản lí thanh toán</h2>
+        <div class="popular-header px-5">
+            <p class="popular-des">Học sáng tạo, thành công vượt trội</p>
+        </div>
+
+
+    <div class="container">
+        <form method="get">
+        <div class="filter-section">
+            <div class="filter-item">
+                <label for="fromDate">Từ ngày</label>
+                    <input type="date" id="fromDate" name="fromDate" class="form-control">
+            </div>
+
+            <div class="filter-item">
+                <label for="toDate">Đến ngày</label>
+                    <input type="date" id="toDate" name="toDate" class="form-control">
+            </div>
+
+            <div class="filter-item">
+                <label for="status">Trạng thái</label>
+                    <select id="status" name="status" class="form-control dropdown-status">
+                        <option value="">Tất cả</option>
+                        <option value="1">Thành công</option>
+                        <option value="2">Thất bại</option>
+                        <option value="3">Hủy giao dịch</option>
+                    </select>
+            </div>
+
+            <div class="filter-item">
+                <label for="orderNumber">Mã đơn hàng</label>
+                    <input type="text" id="orderNumber" name="orderNumber" class="form-control search-input" placeholder="Mã đơn hàng">
+            </div>
+                <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+        </div>
+        </form>
+    </div>
+
+
+        <div class="row mt-4 px-5">
+            <div class="col-6 d-flex align-items-center">
+                <span class="fs-3 me-3">Show</span>
+            <select class="drop-show_number" id="pageSize" asp-for="PageSize" options="@Model.PageSize" onchange="submitForm()">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+            </select>
+                <span class="fs-3 ms-3">Transactions</span>
+            </div>
+        </div>
+        <div class="container mt-5">
+            <div class="courses-container">
+                <table class="course-payment-table">
+                    <thead>
+                        <tr>
+                            <th>Ngày tháng</th>
+                            <th>Mã đơn hàng</th>
+                            <th>Tiền Khóa học</th>
+                            <th>Tổng tiền thanh toán</th>
+                            <th>Phí giao dịch</th>
+                            <th>Trạng thái giao dịch</th>
+                            <th>Mã giao dịch</th>
+                            <th>Mã khách hàng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach ( var payment in Model.PagedPayments ) {
+                        <tr>
+                            <td>@payment.PaymentDate.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                            <td>@payment.TransactionId</td>
+                            <td>@payment.Amount.ToString("N0")</td>
+                            <td>@payment.Amount.ToString("N0")</td>
+                            <td>-</td> <!-- Cột phí giao dịch, nếu không cần thì để trống -->
+                            <td class="@(payment.Status == 1 ? "status-success" : payment.Status == 2 ? "status-cancelled" : "status-failed")">
+                                @(payment.Status == 1 ? "Thành công" : payment.Status == 2 ? "Hủy giao dịch" : "Thất bại")
+                            </td>
+                            <td>@payment.TransactionId</td>
+                            <td>@payment.UserId</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="">
+          @*   No <h3>@Model.PageNo</h3>
+            Size <h3>@Model.PageSize</h3>
+            Total PAGE <h3>@Model.TotalPage</h3> *@
+            <ul class="d-flex align-items-center pagination">
+                @if ( Model.PageNo > 1 ) {
+                    <li class="pagination-btn">
+                        <a class="d-block" asp-route-pageNo="@(Model.PagedPayments.PageNumber - 1)" asp-route-sortBy="@Model.CurrentSort" asp-route-searchTxt="@Model.CurrentFilter">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </a>
+                    </li>
+                }
+                @for ( int i = 1; i <= Model.PagedPayments.PageCount; i++ ) {
+                    <li class="pagination-btn">
+                        <a class="d-block" asp-route-pageNo="@i" asp-route-sortBy="@Model.CurrentSort" asp-route-searchTxt="@Model.CurrentFilter">@i</a>
+                    </li>
+                }
+                @if ( Model.PageNo < Model.TotalPage ) {
+                    <li class="pagination-btn">
+                        <a class="d-block" asp-route-pageNo="@(Model.PagedPayments.PageNumber + 1)" asp-route-sortBy="@Model.CurrentSort" asp-route-searchTxt="@Model.CurrentFilter">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </a>
+                    </li>
+                }
+            </ul>
+            </div>
+        </div>
+    <script>
+        function submitForm() {
+            const pageSize = document.getElementById('pageSize').value;
+            const sortBy = document.querySelector('input[name="sortBy"]:checked')?.value;
+            const searchTxt = document.querySelector('input[name="searchTxt"]').value;
+            const queryString = new URLSearchParams({
+                pageSize: pageSize,
+                sortBy: sortBy || "",
+                searchTxt: searchTxt
+            }).toString();
+
+            window.location.href = `?${queryString}`;
+        }
+        let searchBtn = document.getElementById('searchBtn');
+        searchBtn.addEventListener('click', () => {
+            submitForm()
+        });
+    </script>
+    </div>
+
+
+

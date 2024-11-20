@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Bình luận</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .comment-section {
+            max-width: 700px;
+            margin: 30px auto;
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .comment-toolbar {
+            display: flex;
+            align-items: center;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            background-color: #f1f1f1;
+        }
+        .comment-toolbar button {
+            background: none;
+            border: none;
+            margin-right: 10px;
+            font-size: 1.2em;
+            cursor: pointer;
+        }
+        .comment-input-box {
+            width: 100%;
+            margin-top: 10px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 10px;
+            font-size: 14px;
+        }
+        .comment-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 10px;
+        }
+        .comment-actions button {
+            padding: 8px 16px;
+            border-radius: 5px;
+            border: none;
+            font-weight: bold;
+        }
+        .btn-cancel {
+            background-color: #f1f1f1;
+            color: #6c757d;
+        }
+        .btn-submit {
+            background-color: #007bff;
+            color: white;
+        }
+        .comment {
+            margin-top: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        .comment-author {
+            font-weight: bold;
+            color: #333;
+        }
+        .comment-time {
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+        .comment-text {
+            margin: 10px 0;
+            color: #333;
+        }
+        .comment-actions a {
+            font-size: 0.9em;
+            margin-right: 15px;
+            color: #007bff;
+            cursor: pointer;
+        }
+        .comment-actions a:hover {
+            text-decoration: underline;
+        }
+        .comment-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .comment-body {
+            display: flex;
+        }
+        .comment-content {
+            flex: 1;
+        }
+        .reply-link {
+            color: #007bff;
+            font-size: 0.9em;
+        }
+        .comment-count {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="comment-section">
+        <!-- Toolbar and input for new comment -->
+        <textarea class="comment-input-box" rows="2" placeholder="Nhập bình luận mới của bạn"></textarea>
+        
+        <div class="comment-actions">
+            <button class="btn-cancel">HỦY</button>
+            <button style="margin-left: 20px;" class="btn-submit">BÌNH LUẬN</button>
+        </div>
+
+        <h6 class="comment-count">9999 bình luận</h6>
+        <div class="comment">
+            <div class="comment-body">
+                <img src="img/360_F_65772719_A1UV5kLi5nCEWI0BNLLiFaBPEkUbv5Fv.jpg" alt="User Avatar" class="comment-avatar">
+                <div class="comment-content">
+                    <div class="comment-author">Tien1</div>
+                    <div class="comment-time">một năm trước</div>
+                    <div class="comment-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis, vitae. Quos earum labore ab soluta animi error aperiam perspiciatis, dignissimos, veniam magni sunt sequi autem alias ipsum molestiae neque velit!</div>
+                    <div class="comment-actions">
+                        <a>Thích</a>
+                        <a>Phản hồi</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="comment">
+            <div class="comment-body">
+                <img src="mg/360_F_65772719_A1UV5kLi5nCEWI0BNLLiFaBPEkUbv5Fv.jpg" alt="User Avatar" class="comment-avatar">
+                <div class="comment-content">
+                    <div class="comment-author">Tien1</div>
+                    <div class="comment-time">một năm trước</div>
+                    <div class="comment-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam non eveniet consequatur veritatis nobis asperiores dolorum laudantium velit, laborum quo et officia fugiat qui cupiditate mollitia deserunt autem officiis corrupti?</div>
+                    <div class="comment-actions">
+                        <a>Thích</a>
+                        <a>Phản hồi</a>
+                    </div>
+                    <div class="reply-link">Xem 1 câu trả lời</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="comment">
+            <div class="comment-body">
+                <img src="mg/360_F_65772719_A1UV5kLi5nCEWI0BNLLiFaBPEkUbv5Fv.jpg" alt="User Avatar" class="comment-avatar">
+                <div class="comment-content">
+                    <div class="comment-author">ABC</div>
+                    <div class="comment-time">2 năm trước</div>
+                    <div class="comment-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam harum natus ullam nostrum nobis in aspernatur cupiditate maxime eum modi alias voluptatibus ad, sint nam iusto? Itaque ducimus hic placeat!</div>
+                    <div class="comment-actions">
+                        <a>Thích</a>
+                        <a>Phản hồi</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Bootstrap JS, Popper.js, and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

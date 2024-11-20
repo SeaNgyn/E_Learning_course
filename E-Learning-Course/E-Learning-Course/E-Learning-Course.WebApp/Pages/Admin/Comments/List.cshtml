@@ -1,0 +1,268 @@
+﻿@page
+@model E_Learning_Course.WebApp.Pages.Admin.Comments.ListModel
+@{
+    Layout = "_ManagementLayout";
+}
+
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        color: #444;
+    }
+
+    .table-header {
+        font-weight: bold;
+        color: #555;
+        font-size: 12px;
+        padding: 8px;
+        background-color: #e9ecef;
+        border: 1px solid #ddd;
+    }
+
+    .comment-row:hover {
+        background-color: #fff7e6;
+        transition: background-color 0.3s ease;
+    }
+
+    .comment-actions a {
+        color: #0073aa;
+        font-size: 13px;
+        margin-right: 1rem;
+        text-decoration: none;
+    }
+
+        .comment-actions a:hover {
+            color: #005177;
+        }
+
+        .comment-actions a.text-warning {
+            color: #ffb900;
+        }
+
+        .comment-actions a.text-danger {
+            color: #d63638;
+        }
+
+    .avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: block;
+    }
+
+    .user-info {
+        font-size: 12px;
+        color: #888;
+        margin-top: 8px;
+    }
+
+    .comment-metadata, .comment-response {
+        font-size: 12px;
+        color: #888;
+        text-align: right;
+    }
+
+    .filters a {
+        color: #0073aa;
+        font-weight: bold;
+        margin-right: 1rem;
+        text-decoration: none;
+    }
+
+        .filters a:hover {
+            text-decoration: underline;
+        }
+
+    .comment-kk {
+        scroll-snap-align: start;
+        background-color: #fff;
+        padding: 3rem 1.5rem;
+        border-radius: 1rem;
+        box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+    }
+
+    .text-area-container{
+        width: 50%;
+        padding: 8px;
+        font-size: 14px;
+    }
+
+</style>
+
+
+<body>
+    <div class="popular-courses" style="background-color:white">
+        <h2 class="courses-title mt-5 px-5">Quản lí bình luận</h2>
+        <div class="popular-header px-5">
+            <p class="popular-des">Học sáng tạo, thành công vượt trội</p>
+        </div>
+
+            <!-- Show Transactions Dropdown -->
+        <div class="row mt-4 mb-4 px-5">
+            <div class="col-6 d-flex align-items-center">
+                <span class="fs-3 me-3">Show</span>
+                <select class="drop-show_number" id="pageSize" asp-for="PageSize" options="@Model.PageSize" onchange="submitForm()">
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="15">15</option>
+                </select>
+                <span class="fs-3 ms-3">Comments</span>
+            </div>
+        </div>
+
+            <!-- Comment Header Row -->
+            <div class="row">
+                <div class="col-2 table-header text-center">Author</div>
+                <div class="col-6 table-header">Comment</div>
+                <div class="col-2 table-header text-center">In Course To</div>
+                <div class="col-2 table-header text-center">Submitted On</div>
+            </div>
+
+            <!-- Comment Item 1 -->
+        @foreach ( var comment in Model.PagedComment ) {
+            <div class="comment-row">
+                <div class="row align-items-center comment-kk mt-2">
+                    <div class="col-2 d-flex">
+                        <div class="d-flex flex-column ">
+                            <img src="@comment.Avatar" alt="Avatar" class="avatar">
+                            <div class="user-info">
+                                <div>@comment.UserName</div>
+                                <div>@comment.UserId</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <p class="mt-1">
+                            @((comment.Content.Length > 50) ? @Html.Raw((comment.Content).Substring(0, 50)) + "..." : @Html.Raw(comment.Content))
+                        </p>
+                        <div class="comment-actions" style="display:flex">
+                            <a href="javascript:void(0)" onclick="showReplyArea(@comment.Id)">Reply</a>
+                            <a href="javascript:void(0)" onclick="showEditArea(@comment.Id)">Edit</a>
+                            <form method="post" asp-page-handler="DeleteComment" asp-route-commentId="@comment.Id">
+                                <input type="hidden" name="Id" value="@comment.Id" />
+                                <input type="hidden" name="lessonId" value="@comment.LessonId" />
+                                    <button class="btn btn-primary" type="submit">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-2 text-center comment-response">
+                        <a asp-page="/Homepage/LearningCourse" asp-route-courseId="@comment.CourseId"
+                           asp-route-lessonId="@comment.LessonId">Tới khóa học</a>
+                    </div>
+                    <div class="col-2 text-center comment-metadata">
+                        @comment.CreatedAt.ToString("yyyy/MM/dd")<br>@comment.CreatedAt.ToString("hh:mm tt")
+                    </div>
+                </div>
+
+
+                <!-- Reply Text Area -->
+                <div id="replyArea-@comment.Id" class="text-area-container" style="display: none;">
+                     <form method="post" asp-page-handler="AddReplyComment" >
+                        <input type="hidden" name="lessonId" value="@comment.LessonId" />
+                     <input type="hidden" name="parentCommentId" value="@comment.Id" />
+                     <textarea asp-for="CommentContent" id="default" placeholder="Type your reply here..."></textarea>
+                      @Html.ValidationMessageFor(model => model.CommentContent, "", new { @class = "text-danger" })
+                    <button onclick="submitReply(@comment.Id)">Submit Reply</button>
+                    <button onclick="hideArea('replyArea-@comment.Id')">Cancel</button>
+                    </form>
+                </div>
+
+                <!-- Edit Text Area -->
+                <div id="editArea-@comment.Id" class="text-area-container" style="display: none;">
+                    <form method="post" asp-page-handler="EditComment">
+                         <input type="hidden" name="lessonId" value="@comment.LessonId" />
+                        <input type="hidden" name="Id" value="@comment.Id" />
+                        <textarea name="EditedCommentContent" id="default">@comment.Content</textarea>
+                    <button data-comment-id="@comment.Id" data-comment-content="@comment.Content" onclick="submitEdit(@comment.Id)">Submit Edit</button>
+                    <button onclick="hideArea('editArea-@comment.Id')">Cancel</button>
+                    </form>
+                </div>
+            </div>
+        }
+
+
+        <div class="">
+            @*   No <h3>@Model.PageNo</h3>
+            Size <h3>@Model.PageSize</h3>
+            Total PAGE <h3>@Model.TotalPage</h3> *@
+            <ul class="d-flex align-items-center pagination">
+                @if ( Model.PageNo > 1 ) {
+                    <li class="pagination-btn">
+                        <a class="d-block" asp-route-pageNo="@(Model.PagedComment.PageNumber - 1)" asp-route-sortBy="@Model.CurrentSort" asp-route-searchTxt="@Model.CurrentFilter">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </a>
+                    </li>
+                }
+                @for ( int i = 1; i <= Model.PagedComment.PageCount; i++ ) {
+                    <li class="pagination-btn">
+                        <a class="d-block" asp-route-pageNo="@i" asp-route-sortBy="@Model.CurrentSort" asp-route-searchTxt="@Model.CurrentFilter">@i</a>
+                    </li>
+                }
+                @if ( Model.PageNo < Model.TotalPage ) {
+                    <li class="pagination-btn">
+                        <a class="d-block" asp-route-pageNo="@(Model.PagedComment.PageNumber + 1)" asp-route-sortBy="@Model.CurrentSort" asp-route-searchTxt="@Model.CurrentFilter">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+
+        </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="~/tinymce/tinymce.min.js"></script>
+    <script src="~/js/tinymceConfig.js"></script>
+
+    <script>
+        function showReplyArea(commentId) {
+            hideArea(`editArea-${commentId}`);
+            document.getElementById(`replyArea-${commentId}`).style.display = 'block';
+        }
+
+        function showEditArea(commentId) {
+            hideArea(`replyArea-${commentId}`);
+            document.getElementById(`editArea-${commentId}`).style.display = 'block';
+        }
+
+        function hideArea(areaId) {
+            document.getElementById(areaId).style.display = 'none';
+        }
+
+        function submitReply(commentId) {
+            // Implement reply submission logic here
+            alert('Reply submitted for comment ID: ' + commentId);
+            hideArea(`replyArea-${commentId}`);
+        }
+
+        function submitEdit(commentId) {
+            // Implement edit submission logic here
+            alert('Edit submitted for comment ID: ' + commentId);
+            hideArea(`editArea-${commentId}`);
+        }
+    </script>
+
+
+     <script>
+        function submitForm() {
+            const pageSize = document.getElementById('pageSize').value;
+            const sortBy = document.querySelector('input[name="sortBy"]:checked')?.value;
+            const searchTxt = document.querySelector('input[name="searchTxt"]').value;
+            const queryString = new URLSearchParams({
+                pageSize: pageSize,
+                sortBy: sortBy || "",
+                searchTxt: searchTxt
+            }).toString();
+
+            window.location.href = `?${queryString}`;
+        }
+        let searchBtn = document.getElementById('searchBtn');
+        searchBtn.addEventListener('click', () => {
+            submitForm()
+        });
+    </script>
+
+
+</body>

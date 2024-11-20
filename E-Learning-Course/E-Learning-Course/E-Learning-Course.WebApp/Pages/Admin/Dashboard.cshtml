@@ -1,0 +1,257 @@
+﻿@page
+@model E_Learning_Course.WebApp.Pages.Admin.DashboardModel
+@{
+    Layout = "_ManagementLayout";
+}
+
+<div class="dashboard-container px-5 py-4">
+    <h2 class="dashboard-title mb-4">Admin Dashboard</h2>
+
+    <div class="row mb-4">
+        <!-- Statistics Cards -->
+        <div class="col-md-3">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Total Courses</h5>
+                    <p class="card-text">@Model.TotalCourses</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Active Users</h5>
+                    <p class="card-text">@Model.ActiveUsers</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Total Revenue</h5>
+                    <p class="card-text">$@Model.TotalRevenue.ToString("#,##0")</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-danger mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">New Courses This Month</h5>
+                    <p class="card-text">@Model.NewCoursesThisMonth</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-4">
+
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex align-items-center">
+                    <form asp-page="/Admin/Dashboard" method="get">
+                        <span>Finance Management</span>
+                        <div class="ml-auto">
+                            <select name="month" id="monthSelect" class="mr-3" onchange="updateHiddenInputs()">
+                                @for (int i = 1; i <= 12; i++)
+                                {
+                                    <!option value="@i" @(i == Model.Month ? "selected" : "")>
+                                        @System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i)
+                                    </!option>
+                                }
+                            </select>
+                            <select name="year" id="yearSelect" class="mr-3" onchange="updateHiddenInputs()">
+                                @for (int year = DateTime.Now.Year; year >= 2000; year--)
+                                {
+                                    <!option value="@year" @(year == Model.Year ? "selected" : "")>@year</!option>
+                                }
+                            </select>
+                            <button class="btn btn-primary ml-2" type="submit">Search</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-body">
+                    <!-- Finance Management Table -->
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Amount</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Total Revenue</td>
+                                <td>@Model.TotalRevenue.ToString("#,##0")</td>
+                                <td>
+                                    <form asp-page="/Admin/Dashboard" asp-page-handler="UpdateRevenue" method="post">
+                                        <input type="hidden" id="hiddenMonth" name="Month" value="@Model.Month" />
+                                        <input type="hidden" id="hiddenYear" name="Year" value="@Model.Year" />
+                                        <button type="submit" class="btn btn-primary mt-3">Update Revenue</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Total Fees</td>
+                                <td>@Model.TotalFee.ToString("#,##0")</td>
+                                <td>
+                                    <a asp-page="./UpdateFee" asp-route-month="@DateTime.Now.Month" asp-route-year="@DateTime.Now.Year" class="btn btn-primary">Update Fees</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Net Profit</td>
+                                <td>@((Model.TotalRevenue - Model.TotalFee).ToString("#,##0"))</td>
+                                <td>
+                                    <button class="btn btn-secondary" disabled>Auto-Calculated</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                Finance Management Chart
+            </div>
+            <div class="card-body">
+                <canvas id="financeChart"></canvas>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    Course Enrollments Over Time
+                </div>
+                <div class="card-body">
+                    <canvas id="enrollmentsChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    Revenue Breakdown
+                </div>
+                <div class="card-body">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+<!-- Include Chart.js for rendering charts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Enrollments Chart
+    var ctxEnrollments = document.getElementById('enrollmentsChart').getContext('2d');
+    var enrollmentsChart = new Chart(ctxEnrollments, {
+        type: 'line',
+        data: {
+            labels: @Html.Raw(Json.Serialize(Model.EnrollmentsChartLabels)),
+            datasets: [{
+                label: 'Enrollments',
+                data: @Html.Raw(Json.Serialize(Model.EnrollmentsChartData)),
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+    function updateHiddenInputs() {
+        // Get selected values from dropdowns
+        var selectedMonth = document.getElementById('monthSelect').value;
+        var selectedYear = document.getElementById('yearSelect').value;
+
+        // Update the hidden input fields
+        document.getElementById('hiddenMonth').value = selectedMonth;
+        document.getElementById('hiddenYear').value = selectedYear;
+    }
+    var ctxFinance = document.getElementById('financeChart').getContext('2d');
+    var financeChart = new Chart(ctxFinance, {
+        type: 'bar', // You can use 'line' or 'pie' as well
+        data: {
+            labels: @Html.Raw(Json.Serialize(Model.FinanceChartLabels)),
+            datasets: [{
+                label: 'Net Profit',
+                data: @Html.Raw(Json.Serialize(Model.FinanceChartData)),
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+    // Revenue Chart
+    var ctxRevenue = document.getElementById('revenueChart').getContext('2d');
+    var revenueChart = new Chart(ctxRevenue, {
+        type: 'pie',
+        data: {
+            labels: @Html.Raw(Json.Serialize(Model.RevenueChartLabels)),
+            datasets: [{
+                label: 'Revenue',
+                data: @Html.Raw(Json.Serialize(Model.RevenueChartData)),
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    // Add more colors as needed
+                ],
+                borderColor: [
+                    'rgba(255,99,132,1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    // Add more colors as needed
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+</script>
+
+<style>
+    .dashboard-title {
+        font-size: 2rem;
+        font-weight: bold;
+    }
+
+    .card {
+        min-height: 150px;
+    }
+
+    .card-header {
+        font-weight: bold;
+    }
+
+    .chart-container {
+        position: relative;
+        height: 400px;
+        width: 100%;
+    }
+</style>

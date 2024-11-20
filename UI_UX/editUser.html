@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .profile-card {
+            border: none;
+            border-radius: 8px;
+            background-color: #fff;
+        }
+
+       
+
+        .siber-card {
+            width: 100%;
+            max-width: 260px; 
+            height: 280px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin: 0 auto; 
+        }
+        .siber-card .header {
+            background-color: #0d6efd;
+            padding: 30px 0; 
+        }
+        .siber-card .header img {
+            border-radius: 50%;
+            width: 90px; 
+            height: 90px;
+            object-fit: cover;
+            border: 4px solid white;
+        }
+        .siber-card h5 {
+            margin-top: 10px;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        .siber-card p {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        .profile-content {
+            padding: 40px;
+        }
+        .profile-content h5 {
+            font-size: 1.25rem;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+        }
+        .form-control {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .form-control:focus {
+            box-shadow: none;
+            border-color: #f14668;
+        }
+        .breadcrumb {
+            background-color: transparent;
+            margin-bottom: 20px;
+        }
+        .breadcrumb-item+.breadcrumb-item::before {
+            content: ">";
+            color: #6c757d;
+        }
+        .breadcrumb-item.active {
+            color: #6c757d;
+        }
+        label {
+            font-weight: bold;
+            color: #555;
+        }
+        .row-label {
+            font-size: 0.875rem;
+            margin-bottom: 5px;
+        }
+        .profile-container {
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container mt-5 profile-container">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="d-flex justify-content-center align-items-start">
+                <div class="siber-card" style="margin-top: 70px;" id="profileCard">
+                    <div class="header">
+                        <img src="img/360_F_65772719_A1UV5kLi5nCEWI0BNLLiFaBPEkUbv5Fv.jpg" alt="Profile Image" id="profileImage">
+                    </div>
+                    <h5>TienDz</h5>
+                    <p>Student</p>
+                    <!-- Hidden input for file selection -->
+                    <input type="file" id="imageInput" style="display: none;" accept="image/*">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="profile-card">
+                <div class="profile-content">
+                    <h5>My Profile</h5>
+                    <form>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="firstName" class="row-label">First Name</label>
+                                <input type="text" class="form-control" id="firstName" value="aaaa">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="lastName" class="row-label">Last Name</label>
+                                <input type="text" class="form-control" id="lastName" value="bbbbb">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="userName" class="row-label">User Name</label>
+                                <input type="text" class="form-control" id="userName" value="ccccc">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="row-label">Email</label>
+                                <input type="email" class="form-control" id="email" value="aaaa@gmail.com">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="phone" class="row-label">Phone Number</label>
+                                <input type="text" class="form-control" id="phone" value="0987654321">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 mb-3">
+                                <label for="bio" class="row-label">Bio</label>
+                                <textarea class="form-control" id="bio" rows="3">abcdefgh</textarea>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-danger">Save Changes</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    const profileCard = document.getElementById('profileCard');
+    const profileImage = document.getElementById('profileImage');
+    const imageInput = document.getElementById('imageInput');
+
+    // Trigger input click when the image is clicked
+    profileCard.addEventListener('click', () => {
+        imageInput.click();
+    });
+
+    // Update profile image when a new image is selected
+    imageInput.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                profileImage.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
+
+</body>
+</html>

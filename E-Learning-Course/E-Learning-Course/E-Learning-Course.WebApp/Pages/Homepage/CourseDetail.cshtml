@@ -1,0 +1,262 @@
+﻿@page "{id:int}"
+@model E_Learning_Course.WebApp.Pages.Homepage.CourseDetailModel
+@{
+    Layout = "_Layout";
+}
+<div class="container mt-50 course-wrapper">
+    <!-- /course detail -->
+    <div class="course__info">
+        <h1 class="course__info-name">@Model.CourseDetail?.Title</h1>
+        <p class="course__info-des">
+            Để có cái nhìn tổng quan về ngành IT - Lập trình web các bạn nên xem các videos
+            tại khóa này trước nhé.
+        </p>
+        <div class="course__preview preview-second">
+            <h5 class="course__preview-price">Free</h5>
+            <button class="course__preview-learn" onclick="directionLearningPage()">Đăng ký học</button>
+            <ul>
+                <li>
+                    <i class="fa-solid fa-bars-progress"></i>
+                    <span>Trình độ cơ bản</span>
+                </li>
+                <li>
+                    <i class="fa-solid fa-film"></i>
+                    <span>Tổng số 11 bài học</span>
+                </li>
+                <li>
+                    <i class="fa-solid fa-clock"></i>
+                    <span>Trình độ cơ bản</span>
+                </li>
+                <li>
+                    <i class="fa-solid fa-battery-three-quarters"></i>
+                    <span>Học mọi thứ, mọi nơi</span>
+                </li>
+            </ul>
+        </div>
+        <div class="course__info-topic">
+            <h2 class="topic-heading">Bạn sẽ học được gì?</h2>
+            <div class="topic-content">
+                <ul class="topic-list">
+
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        <span>Giải Đề PE Java Web: Nâng Cao Kỹ Năng Servlet và JSP</span>
+                    </li>
+
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        <span> Thực Hành Java Servlet và JSP: Giải Quyết Đề Thi PE</span>
+                    </li>
+
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        <span>Khóa Học Giải Đề PE: Phát Triển Ứng Dụng Web với Java Servlet và JSP</span>
+                    </li>
+
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        <span>Học Thực Hành Java Web: Giải Đề PE Servlet và JSP</span>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+        @functions {
+            public string ConvertToTimeFormat(double? duration)
+            {
+                if (duration == null || duration <= 0)
+                {
+                    return "0 giờ 0 phút 0 giây";
+                }
+
+                TimeSpan time = TimeSpan.FromSeconds(duration.Value);
+
+                return $"{(int)time.TotalHours} giờ {time.Minutes} phút {time.Seconds} giây";
+            }
+        }
+        <div class="course__info-curr">
+            <h2 class="curr-heading">Nội dung khóa học</h2>
+            <div class="curr-header">
+                <ul>
+                    <li>
+                        <strong>@Model.Chapters.Count</strong> chương
+                    </li>
+                    <li class="curr-header-dot">.</li>
+                    <li>
+                        <strong>@Model.Chapters.SelectMany(c => c.Lessons).Count()</strong> bài học
+                    </li>
+                    <li class="curr-header-dot">.</li>
+                    <li>
+                        Thời lượng <strong> @ConvertToTimeFormat(@Model.Chapters.Sum(c => c.Duration))</strong>
+                    </li>
+                </ul>
+                <div class="curr-extent-btn">Mở rộng tất cả</div>
+            </div>
+
+            <!-- Chapter List -->
+            <div class="curr-content">
+                <ul class="curr-list">
+                    @foreach (var chapter in Model.Chapters)
+                    {
+                        <li class="curr__lesson">
+                            <div class="curr__lesson-panel">
+                                <h2 class="curr__lesson-name">@chapter.Name</h2>
+                                <p>@chapter.Lessons.Count bài học</p>
+                            </div>
+                            <div class="curr__lesson-collapse">
+                                <!-- Lesson List within the Chapter -->
+                                @foreach (var lesson in chapter.Lessons)
+                                {
+                                    <div class="curr__lesson-item">
+                                        <h5 class="curr__lesson-itemName">@lesson.Name</h5>
+                                        <p class="curr__lesson-itemTime"> @ConvertToTimeFormat(lesson.Duration)</p>
+                                    </div>
+                                }
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="course__preview preview-primary mt-50">
+        <div class="course__preview-img">
+            <img src="@Model.CourseDetail?.Thumbnail" alt="@Model.CourseDetail?.Title" class="img-fluid" />
+            <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="circle-play"
+                 class="course__preview-play" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                <path fill="currentColor"
+                      d="M512 256C512 397.4 397.4 512 256 512C114.6 512 0 397.4 0 256C0 114.6 114.6 0 256 0C397.4 0 512 114.6 512 256zM176 168V344C176 352.7 180.7 360.7 188.3 364.9C195.8 369.2 205.1 369 212.5 364.5L356.5 276.5C363.6 272.1 368 264.4 368 256C368 247.6 363.6 239.9 356.5 235.5L212.5 147.5C205.1 142.1 195.8 142.8 188.3 147.1C180.7 151.3 176 159.3 176 168V168z">
+                </path>
+            </svg>
+            <p>Xem giới thiệu khóa học</p>
+        </div>
+        <h5 class="course__preview-price">
+            @if (Model.CourseDetail.Price == 0)
+            {
+                <span>Free</span>
+            }
+            else
+            {
+                <span>@Model.CourseDetail.Price.ToString("#,##0")₫</span>
+            }
+        </h5>
+        @if (Model.HasAccess == 1)
+        {
+            <!-- If the user has access, redirect them to the learning page -->
+            <a class="course__preview-learn btn" asp-page="/Homepage/LearningCourse" asp-route-courseId="@Model.CourseDetail.Id"
+               asp-route-lessonId="@Model.LessonId">Bắt đầu học</a>
+        }
+        else if (Model.HasAccess == 0)
+        {
+            <!-- If the user doesn't have access, direct them to the payment page -->
+            <a class="course__preview-learn btn" asp-page="/Homepage/PaymentConfirm" asp-route-id="@Model.CourseDetail?.Id">Đăng ký học</a>
+        }
+        else
+        {
+            <a class="course__preview-learn btn" asp-page="/Homepage/PaymentConfirm" asp-route-id="@Model.CourseDetail?.Id">Đăng ký học lại</a>
+        }
+        <ul>
+            <li>
+                <i class="fa-solid fa-bars-progress"></i>
+                <span>Trình độ cơ bản</span>
+            </li>
+            <li>
+                <i class="fa-solid fa-film"></i>
+                <span>Tổng số @Model.CourseDetail.Lessons bài học</span>
+            </li>
+            <li>
+                <i class="fa-solid fa-clock"></i>
+                <span>@ConvertToTimeFormat(Model.CourseDetail.Durations)</span>
+            </li>
+            <li>
+                <i class="fa-solid fa-battery-three-quarters"></i>
+                <span>Học mọi thứ, mọi nơi</span>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="preview__course">
+    <div class="preview__course-wrapper">
+        <h3>Giới thiệu khóa học</h3>
+        <h2>@Model.CourseDetail?.Title</h2>
+        <div class="preview__course-video">
+        </div>
+        <div class="preview__course-close">
+            <i class="fa-solid fa-x" onclick="document.querySelector('.preview__course').style.display='none';"></i>
+        </div>
+    </div>
+</div>
+<script>
+    function showPreviewCourse() {
+        let courseVideoLayer = document.querySelector('.preview__course')
+        let courseVideoPre = document.querySelector('.preview__course')
+        let courseImgLayer = document.querySelector('.course__preview-img')
+        let closeVideoPre = document.querySelector('.preview__course-close i')
+        let courseVideoContainer = document.querySelector('.preview__course-wrapper')
+        let courseVideoWrapp = document.querySelector('.preview__course-video')
+        courseVideoContainer.addEventListener('click', (e) => {
+            e.stopPropagation()
+        })
+        courseImgLayer.addEventListener('click', () => {
+            courseVideoPre.style.display = 'block'
+            courseVideoWrapp.innerHTML = `<video class="preview__course-video-play" width="560" height="315" controls autoplay>
+                                <source src="@Model.CourseDetail.PreviewVideo" type="video/mp4">
+                            </video>`
+        })
+        closeVideoPre.addEventListener('click', () => {
+            courseVideoPre.style.display = 'none'
+            courseVideoWrapp.innerHTML = ``;
+        })
+        courseVideoLayer.addEventListener('click', () => {
+            courseVideoPre.style.display = 'none'
+            courseVideoWrapp.innerHTML = ``;
+        })
+    }
+    showPreviewCourse()
+
+    function showLessonInCurr() {
+        let currLessons = document.querySelectorAll('.curr__lesson')
+        let openAllLessons = document.querySelector('.curr-extent-btn')
+
+        openAllLessons.addEventListener('click', () => {
+            if (openAllLessons.innerHTML == 'Mở rộng tất cả') {
+                currLessons.forEach((lesson) => {
+                    lesson.classList.add('showLessonItem')
+                    openAllLessons.innerHTML = 'Thu nhỏ tất cả'
+                })
+            } else {
+                currLessons.forEach((lesson) => {
+                    lesson.classList.remove('showLessonItem')
+                    openAllLessons.innerHTML = 'Mở rộng tất cả'
+                })
+            }
+        })
+
+        currLessons.forEach((lesson) => {
+            lesson.addEventListener('click', () => {
+                lesson.classList.toggle('showLessonItem')
+                checkOpen()
+            })
+        })
+        let currLessonCollapse = document.querySelectorAll('.curr__lesson-collapse')
+        currLessonCollapse.forEach((item) => {
+            item.addEventListener('click', (e) => {
+                e.stopPropagation()
+            })
+        })
+        function checkOpen() {
+            let countOpent = 0;
+            for (let i = 0; i < currLessons.length; i++) {
+                if (currLessons[i].classList.contains('showLessonItem')) {
+                    countOpent++;
+                }
+            }
+            if (countOpent == currLessons.length) {
+                openAllLessons.innerHTML = 'Thu nhỏ tất cả'
+            } else {
+                openAllLessons.innerHTML = 'Mở rộng tất cả'
+            }
+        }
+    }
+    showLessonInCurr()
+</script>

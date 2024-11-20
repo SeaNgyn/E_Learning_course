@@ -1,0 +1,46 @@
+﻿@page
+@model E_Learning_Course.WebApp.Pages.Authentication.ConfirmEmailModel
+@{
+    ViewData["Title"] = "Confirm Email";
+    Layout = "_Layout"; // Specify the shared layout
+}
+
+<div class="d-flex justify-content-center align-items-center vh-100">
+    <div class="card p-4 shadow" style="width: 500px;">
+        <h2 class="card-title text-center mb-4">@ViewData["Title"]</h2>
+
+        @if (!string.IsNullOrEmpty(Model.StatusMessage))
+        {
+            <div class="alert @GetAlertClass(Model.StatusMessage)" role="alert">
+                @Model.StatusMessage
+            </div>
+        }
+        else
+        {
+            <p class="text-center">No status message to display.</p>
+        }
+
+        <div class="text-center mt-4">
+            <a asp-page="/Homepage/Index" class="btn btn-primary">Return to Home</a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+@functions {
+    // Helper method to determine alert class based on message content
+    private string GetAlertClass(string message)
+    {
+        if (message.Contains("success", StringComparison.OrdinalIgnoreCase))
+            return "alert-success";
+        else if (message.Contains("error", StringComparison.OrdinalIgnoreCase))
+            return "alert-danger";
+        else if (message.Contains("warning", StringComparison.OrdinalIgnoreCase))
+            return "alert-warning";
+        else
+            return "alert-info";
+    }
+}

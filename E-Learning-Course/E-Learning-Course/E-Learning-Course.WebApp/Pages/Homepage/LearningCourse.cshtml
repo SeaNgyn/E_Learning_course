@@ -1,0 +1,1201 @@
+﻿@page
+@model E_Learning_Course.WebApp.Pages.Homepage.LearningCourseModel
+@{
+    Layout = "_LearningLayout";
+}
+
+
+<style>
+    .comment-fix {
+        position: sticky;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1;
+        display: flex;
+        justify-content: end;
+    }
+
+    .btn-comment {
+        font-size: 1.6rem;
+        font-weight: 600;
+        background-color: #fff;
+        padding: 8px 12px;
+        border-radius: 999px;
+        box-shadow: 0 0 10px #0003;
+        cursor: pointer;
+    }
+
+
+    .comment-section {
+        position: fixed;
+        transform: translateX(0); /* Hiển thị sidebar */
+        top: 0;
+        right: 0;
+        width: 50%;
+        height: 100%; /* Chiều cao cố định */
+        background-color: white;
+        border-left: 1px solid #ddd;
+        box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        overflow-y: auto; /* Kích hoạt thanh cuộn dọc khi nội dung vượt quá chiều cao */
+    }
+
+
+        .comment-section.show {
+            transform: translateX(0);
+            opacity: 1;
+            visibility: visible;
+        }
+
+    .comment-toolbar {
+        display: flex;
+        align-items: center;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 10px;
+        background-color: #f1f1f1;
+    }
+
+        .comment-toolbar button {
+            background: none;
+            border: none;
+            margin-right: 10px;
+            font-size: 1.2em;
+            cursor: pointer;
+        }
+
+    .comment-input-box {
+        width: 100%;
+        margin-top: 10px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .comment-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 10px;
+    }
+
+        .comment-actions button {
+            padding: 8px 16px;
+            border-radius: 5px;
+            border: none;
+            font-weight: bold;
+        }
+
+    .btn-cancel {
+        background-color: #f1f1f1;
+        color: #6c757d;
+    }
+
+    .btn-submit {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .comment {
+        margin-top: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .comment-author {
+        font-weight: bold;
+        color: #333;
+    }
+
+    .comment-time {
+        font-size: 0.9em;
+        color: #6c757d;
+    }
+
+    .comment-text {
+        margin: 10px 0;
+        color: #333;
+    }
+
+    .comment-actions a {
+        font-size: 0.9em;
+        margin-right: 15px;
+        color: #007bff;
+        cursor: pointer;
+    }
+
+        .comment-actions a:hover {
+            text-decoration: underline;
+        }
+
+    .comment-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+
+    .comment-body {
+        display: flex;
+    }
+
+    .comment-content {
+        flex: 1;
+    }
+
+    .reply-link {
+        color: #007bff;
+        font-size: 0.9em;
+    }
+
+    .comment-count {
+        font-weight: bold;
+        margin-top: 10px;
+    }
+
+    .comment-list {
+        max-height: 700px; /* Chiều cao giới hạn cho phần bình luận */
+        overflow-y: auto; /* Kích hoạt thanh cuộn cho phần bình luận */
+    }
+
+    .comment-section::-webkit-scrollbar {
+        width: 8px; /* Chiều rộng của scrollbar */
+    }
+
+    .comment-section::-webkit-scrollbar-thumb {
+        background-color: #007bff; /* Màu của thanh cuộn */
+        border-radius: 10px; /* Bo góc cho thanh cuộn */
+    }
+
+    .comment-section::-webkit-scrollbar-track {
+        background-color: #f1f1f1; /* Màu nền của thanh cuộn */
+    }
+
+    .comment-content img {
+        max-width: 150px; /* Thay đổi kích thước tối đa cho hình ảnh */
+        height: auto; /* Giữ tỉ lệ chiều cao tự động */
+    }
+
+
+    .comment {
+        position: relative;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-bottom: 15px;
+    }
+
+    .menu-container {
+        position: absolute;
+        top: 10px; /* Căn chỉnh khoảng cách từ trên cùng */
+        right: 10px; /* Căn chỉnh khoảng cách từ bên phải */
+    }
+
+    .menu-btn {
+        background: none;
+        border: none;
+        font-size: 20px;
+        cursor: pointer;
+    }
+
+    .menu-options {
+        position: absolute;
+        top: 30px;
+        right: 10px;
+        background-color: #f9f9f9;
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+        display: none;
+    }
+
+        .menu-options ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+            .menu-options ul li {
+                padding: 8px 16px;
+                cursor: pointer;
+            }
+
+                .menu-options ul li:hover {
+                    background-color: #ddd;
+                }
+
+
+
+    .quiz-section {
+        margin-top: 20px;
+        padding: 15px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .quiz-question {
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #ddd;
+    }
+
+        .quiz-question:last-child {
+            border-bottom: none;
+        }
+
+        .quiz-question p {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .quiz-question ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .quiz-question li {
+            margin-bottom: 8px;
+        }
+
+        .quiz-question input[type="radio"] {
+            margin-right: 10px;
+        }
+
+    label {
+        font-size: 16px;
+        cursor: pointer;
+    }
+    /*
+        button[type="submit"] {
+            display: block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+            button[type="submit"]:hover {
+                background-color: #0056b3;
+            } */
+
+    .score-display {
+        font-size: 20px; /* Increase the font size */
+        font-weight: bold; /* Make the score bold */
+        color: #007bff; /* Primary color for score text */
+        margin-top: 20px; /* Space above the score paragraph */
+        margin-bottom: 20px; /* Space below the score paragraph */
+        text-align: center; /* Center the text */
+        padding: 10px; /* Padding around the score text */
+        border: 2px solid #007bff; /* Border around the score */
+        border-radius: 5px; /* Rounded corners for the border */
+        background-color: #f1f8ff; /* Light background color for the score display */
+    }
+</style>
+
+
+<body>
+    @Html.AntiForgeryToken()
+    @functions {
+        public string FormatTime(double? totalSeconds)
+        {
+            int roundedSeconds = (int)Math.Round(totalSeconds ?? 0); // Làm tròn số giây
+
+            int hours = roundedSeconds / 3600;
+            int minutes = (roundedSeconds % 3600) / 60;
+            int seconds = roundedSeconds % 60;
+
+            string timeString = "";
+
+            if (hours > 0)
+            {
+                timeString += $"{hours}h ";
+            }
+
+            if (minutes > 0 || hours > 0) // Hiển thị phút nếu có giờ hoặc phút khác 0
+            {
+                timeString += $"{minutes}m ";
+            }
+
+            timeString += $"{seconds}s"; // Luôn hiển thị giây
+
+            return timeString.Trim(); // Loại bỏ khoảng trắng thừa ở cuối chuỗi
+        }
+    }
+    @{
+        double numLesson = 0;
+        double numPass = 0;
+    }
+    @for (int i = 0; i < Model.Chapters.Count; i++)
+    {
+        @for (int j = 0; j < Model.Chapters[i].Lessons.Count; j++)
+        {
+            numLesson++;
+            if (Model.Chapters[i].Lessons[j].IsPass ?? false)
+            {
+                numPass++;
+            }
+        }
+    }
+    @{
+        double progress = numPass / numLesson * 100;
+        var deg = progress + "deg";
+    }
+    <div id="header" class="landingPage">
+        <nav class="container">
+            <a href="/Homepage/CourseDetail/@Model.CourseId"
+               class="prev_page-btn">
+                <i class="fa-solid fa-chevron-left"></i>
+            </a>
+            <div class="header__course-title">@Model.CurrentLesson.Name</div>
+            <div class="header__learning-progress">
+                <div class="header__learning-progress-percent">
+                    <div class="circular-progress" style="background: conic-gradient(red 0deg, rgb(77, 79, 80) @deg);">
+                        <span class="progress-value">@Math.Round(progress)</span>
+                    </div>
+                </div>
+                <div class="header__learning-progress-lesson">@numPass/@numLesson bài học</div>
+            </div>
+        </nav>
+    </div>
+    <div class="learning__wrapper">
+        <div class="learning__video-content">
+            @if (Model.CurrentLesson.Type.Equals("Video"))
+            {
+                <div class="learning__video-box">
+                    <video id="learning__video-now" title="@Model.CurrentLesson.Name"
+                           class="preview__course-video-play" width="640" height="390"
+                           src="@Model.CurrentLesson.VideoUrl"
+                           autoplay
+                           controls></video>
+                </div>
+                <button id="load-saved-time-btn">Load Saved Time</button>
+                @if (Model.ProgressLesson.Passing == 0)
+                {
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function () {
+                            let player = document.getElementById('learning__video-now');
+
+                            // Alerting the current time of the video player
+                            player.addEventListener('timeupdate', function () {
+                                let currentTime = player.currentTime;
+                                console.log("Current Time of the Video Player: ", currentTime);
+                            });
+
+                            // Save the time when the user pauses the video
+                            player.addEventListener('pause', function () {
+                                saveLastWatchedTime(player.currentTime);
+                            });
+
+                            // Save the time when the user leaves the page
+                            window.addEventListener('beforeunload', function () {
+                                saveLastWatchedTime(player.currentTime);
+                            });
+
+                            // Save the time when the video ends
+                            player.addEventListener('ended', function () {
+                                console.log('end');
+                                saveLastWatchedTime(player.currentTime);
+                            });
+
+                            function saveLastWatchedTime(currentTime) {
+                                fetch('?handler=UpdateTimeLearning', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        "RequestVerificationToken": document.querySelector('input[name="__RequestVerificationToken"]').value
+                                    },
+                                    body: JSON.stringify({ Progress: currentTime, LessonId: @Model.CurrentLesson.Id })
+                                })
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        if (data.isPassing) {
+                                            console.log("Đã vượt qua bài học hiện tại, khóa học tiếp theo sẽ được mở khóa.");
+                                            let currL = document.querySelector('.lesson-index-' + @Model.CurrentLesson.Id);
+                                            const nextL = currL ? currL.nextElementSibling : null;
+
+                                            if (nextL) {
+                                                console.log("Phần tử kế tiếp:", nextL);
+                                                nextL.classList.add("canLearn");
+                                            }
+                                        } else {
+                                            console.log("Chưa vượt qua bài học hiện tại.");
+                                        }
+                                    })
+                                    .catch(error => console.error('Error:', error));
+                            }
+                        });
+                    </script>
+                }
+            }
+            else
+            {
+                if (Model.ProgressLesson != null)
+                {
+                    @if (TempData["messQuizz"] != null)
+                    {
+                        <div class="alert alert-warning fs-4 py-3">
+                            @TempData["messQuizz"]
+                        </div>
+                    }
+
+                    if (Model.IsDoingQuizz)
+                    {
+                        <form method="POST" id="form-quizz">
+                            <input type="hidden" asp-for="CurrentLessonId" value="@Model.CurrentLessonId" />
+
+                            <input type="hidden" asp-for="CourseId" value="@Model.CourseId" />
+                            <div class="quiz">
+                                <div class="d-flex justify-content-between align-items-center mb-3 mt-4 px-5 border-bottom">
+                                    <div>
+                                        <h4 class="font-weight-bold fs-3">@Model.CurrentLesson.Name</h4>
+                                        <p class="text-primary fs-5">Graded Assignment · @FormatTime(Model.CurrentLesson.Duration)</p>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="fs-4">Time Remaining: <strong class="text-danger" id="time-count-down">30:00</strong></span>
+                                    </div>
+                                </div>
+                                <!-- Phần đếm giờ -->
+                                <div class="container">
+                                    <ul class="list-group ">
+                                        @{
+                                            var stt = 1;
+                                        }
+                                        @foreach (var question in Model.Questions)
+                                        {
+                                            <li class="list-group-item fs-4 mb-5 border-0">
+                                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                                    <span class="font-weight-bold fs-4"><strong>@stt.</strong> @question.QuestionText</span>
+                                                    <span class="badge badge-secondary">1 point</span>
+                                                </div>
+                                                @{
+                                                    bool isMultipleChoice = question.Answers.Count(a => a.IsCorrect) > 1;
+                                                }
+                                                <ul class="list-unstyled ml-3">
+                                                    @for (int i = 0; i < question.Answers.Count; i++)
+                                                    {
+                                                        var answer = question.Answers[i];
+                                                        <li class="form-check mb-2">
+                                                            <input asp-for="@Model.Questions[@stt - 1].Answers[i].IsSelected" class="form-check-input" type="@(isMultipleChoice ? "checkbox" : "radio")" name="question-@question.Id" value="@answer.Id" id="answer-@answer.Id" />
+                                                            <label class="form-check-label fs-4 fw-normal" for="answer-@answer.Id">
+                                                                @answer.AnswerText
+                                                            </label>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </li>
+                                            stt++;
+                                        }
+                                    </ul>
+                                    <div class="d-flex justify-content-start mt-4 me-auto">
+                                        @* <button type="button" class="btn btn-primary me-4 fs-3 px-5 py-3"
+                            data-bs-toggle="modal"
+                            data-bs-target="#confirmSubmitModal">
+                            Submit
+                            </button> *@
+                                        <button type="submit" class="btn btn-primary me-4 fs-3 px-5 py-3">
+                                            Submit
+                                        </button>
+                                        <button type="button" class="btn btn-outline-primary fs-3 px-5 py-3">Save draft</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    }
+                    else
+                    {
+                        //da lam => th resume || th hien thi diem
+                        <div class="container mt-5">
+                            <div class="alert alert-primary p-4 mb-4 rounded shadow-sm w-50">
+                                <h5 class="mb-3"><strong>Assignment details</strong></h5>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p class="fs-4"><strong>Due:</strong></p>
+                                        <p class="fs-4"><strong>Submitted:</strong>@Model.ProgressLesson.CreatedAt</p>
+                                    </div>
+                                    <div class="col-md-6 text-end">
+                                        <p class="fs-4"><strong>Attempts:</strong> Unlimited</p>
+                                        <button class="btn btn-primary fs-4 px-4 py-2">
+                                            <a class="text-white text-decoration-none" href="?quizz=resume&courseId=@Model.Course.Id&lessonId=@Model.CurrentLesson.Id">Resume</a>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Phần hiển thị điểm -->
+                            <div class="alert @(Model.ProgressLesson.Passing == 1 ? "alert-success" : "alert-danger") p-4 rounded shadow-sm text-center w-50">
+                                <h3 class="mb-3"><strong>Your grade</strong></h3>
+                                <p class="fs-4">@(Model.ProgressLesson.Passing == 1 ? "Congratulation" : "To pass you need try more").</p>
+                                <h1 class="display-4 mb-3">@Model.ProgressLesson.ProgressPercentage</h1>
+                            </div>
+                        </div>
+                    }
+
+                }
+                else
+                {
+                    //chua lam va dang doing => form quizz
+
+                    //chua lam => hien thi nut start
+                    <div class="container mt-5">
+                        <div class="alert alert-primary p-5 mb-4 rounded shadow-sm w-50">
+                            <h5 class="mb-3"><strong>Assignment details</strong></h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p class="fs-4"><strong>Due:</strong></p>
+                                    <p class="fs-4"><strong>Create At:</strong>@Model.CurrentLesson.CreatedAt</p>
+                                </div>
+                                <div class="col-md-6 text-end">
+                                    <p class="fs-4"><strong>Attempts:</strong> Unlimited</p>
+                                    <button class="btn btn-primary fs-4 px-4 py-2">
+                                        <a class="text-white text-decoration-none" href="?quizz=start&courseId=@Model.Course.Id&lessonId=@Model.CurrentLesson.Id">Start</a>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                }
+            }
+            <div class="leanring__video-info">
+                <h3 class="leanring__video-name">@Model.CurrentLesson.Name</h3>
+                <p class="leanring__video-update-day">Cập nhật @Model.CurrentLesson.CreatedAt</p>
+                <h4>Tham gia các cộng đồng để cùng học hỏi, chia sẻ và "thám thính" xem TVCDev sắp có gì mới nhé!</h4>
+                <div class="leanring__video-line"></div>
+                <ul class="p-0">
+                    <li>
+                        Fanpage:
+                        <a href="https://www.facebook.com/f8vnofficial">https://www.facebook.com/f8vnofficial</a>
+                    </li>
+                    <li>
+                        Group:
+                        <a href="https://www.facebook.com/f8vnofficial">https://www.facebook.com/f8vnofficial</a>
+                    </li>
+                    <li>
+                        Youtube:
+                        <a href="https://www.facebook.com/f8vnofficial">https://www.facebook.com/f8vnofficial</a>
+                    </li>
+                    <li>
+                        Cường Trần:
+                        <a href="https://www.facebook.com/f8vnofficial">https://www.facebook.com/f8vnofficial</a>
+                    </li>
+                </ul>
+                <p class="leanring__video-bottom">
+                    Made with
+                    <i class="fa-solid fa-heart"></i>
+                    <span class="leanring__video-bottom-dot">·</span>
+                    TVCDev
+                </p>
+            </div>
+            <div class="comment-fix mt-3">
+                <button class="btn btn-white shadow-sm rounded-pill btn-comment" id="openCommentBtn">
+                    <i class="fa-solid fa-comments"></i> Hỏi đáp
+                </button>
+            </div>
+        </div>
+        @functions {
+            public string ConvertToTimeFormat(double? duration)
+            {
+                if (duration == null || duration <= 0)
+                {
+                    return "00:00:00";
+                }
+
+                // Giả sử duration là tổng số giây và chuyển nó thành TimeSpan từ giây
+                TimeSpan time = TimeSpan.FromSeconds(duration.Value);
+
+                return string.Format("{0:D2}:{1:D2}:{2:D2}",
+                (int)time.TotalHours,
+                time.Minutes,
+                time.Seconds);
+            }
+        }
+        <div class="overlay-screen"></div>
+        <div class="learning__video-nav">
+            <div class="learning__video-nav-header">
+                <h3>Nội dung khóa học</h3>
+                <i class="fa-sharp fa-solid fa-xmark close__nav-btn"></i>
+            </div>
+            <ul class="learning__list p-0">
+                @{
+                    int index = 1;
+                }
+                @{
+                    bool passing = false;
+                }
+                @for (int i = 0; i < Model.Chapters.Count; i++)
+                {
+                    int passCount = Model.Chapters[i].Lessons.Where(Lesson => Lesson.IsPass == true).Count();
+                    <li class="learning__item learning_chapter-index-@Model.Chapters[i].Id" onClick="saveChapterOpen(@Model.Chapters[i].Id)">
+                        <div class="learning__chapter-panel learning__chapter-1">
+                            <h2 class="learning__chapter-name">@(i + 1). @Model.Chapters[i].Name</h2>
+                            <span class="learning__chapter-progress">@passCount/@Model.Chapters[i].Lessons.Count | @ConvertToTimeFormat(Model.Chapters[i].Duration)</span>
+                        </div>
+
+                        <div class="learning__chapter-collapse">
+                            @for (int j = 0; j < Model.Chapters[i].Lessons.Count; j++)
+                            {
+                                if (index > 1)
+                                {
+                                    // Kiểm tra xem bài học trước đó đã hoàn thành chưa
+                                    var previousLesson = Model.Chapters.SelectMany(chap => chap.Lessons)
+                                    .ElementAt(index - 2);
+                                    passing = previousLesson.IsPass ?? false;
+                                }
+
+                                var classActive = Model.CurrentLesson.Id == Model.Chapters[i].Lessons[j].Id ? "learning" : "";
+                                var classLearned = Model.Chapters[i].Lessons[j].IsPass == true ? "learned" : "";
+                                var lessonQuizz = Model.Chapters[i].Lessons[j].Type.Equals("quizz") ? "learning_quizz" : "";
+                                <div class="learning__lesson-item lesson-index-@Model.Chapters[i].Lessons[j].Id @classActive @classLearned @(passing||index==1?"canLearn":"")" onclick="learning(@Model.Course.Id, @Model.Chapters[i].Lessons[j].Id)">
+                                    <h5 class="learning__lesson-item-name">@(index). @Model.Chapters[i].Lessons[j].Name</h5>
+                                    <p class="learning__lesson-item-time @lessonQuizz">@ConvertToTimeFormat(@Model.Chapters[i].Lessons[j].Duration)</p>
+                                </div>
+                                index++;
+                            }
+                        </div>
+                    </li>
+                }
+            </ul>
+        </div>
+        <div class="learning__action-nav">
+            <button class="learning__lesson-prev">
+                <i class="fa-solid fa-chevron-left"></i>
+                <span>Bài trước</span>
+            </button>
+
+            <button class="learning__lesson-next">
+                <span>Bài tiếp theo</span>
+                <i class="fa-solid fa-chevron-right"></i>
+            </button>
+            <div class="learning__lesson-nav">
+                <h3 class="learning__lesson-name">1. Khái niệm cần biết</h3>
+                <i class="fa-solid fa-bars learning__lesson-menuICon"></i>
+                <i class="fa-solid fa-arrow-right learning__lesson-right"></i>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="confirmSubmitModal" tabindex="-1" aria-labelledby="confirmSubmitModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <!-- Căn giữa modal -->
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title fs-2 px-3 py-3" id="confirmSubmitModalLabel">Ready to submit?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center fs-3 py-5">
+                    Are you sure you want to submit your answers?
+                </div>
+                <div class="modal-footer d-flex justify-content-center border-0 py-4">
+                    <a id="confirmSubmitButton" href="#" class="btn btn-primary fs-4 px-5 py-3">Submit</a>
+                    <button type="button" class="btn btn-outline-primary fs-4 px-5 py-3" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <h2>
+        @Model.Mess
+    </h2>
+
+    <div class="comment-section" id="commentSection">
+        <form id="commentForm" method="post" asp-page-handler="AddComment">
+            <div class="comment-list" id="comment-list">
+                <input type="hidden" asp-for="CourseId" />
+                <input type="hidden" asp-for="LessonId" />
+
+                <textarea id="default" name="CommentContent" placeholder="Nhập bình luận mới của bạn"></textarea>
+                <span asp-validation-for="@Model.CommentContent" class="text-danger">@Model.Mess</span>
+                <div id="successMessage" style="display: none; color: green;">Submit thành công!</div>
+
+
+                <div class="comment-actions">
+                    <button type="button" class="btn-cancel">HỦY</button>
+                    <button type="submit" id="SendComment" style="margin-left: 20px;" class="btn-submit">BÌNH LUẬN</button>
+                </div>
+            </div>
+        </form>
+
+
+        <h6 class="comment-count">@Model.CommentCount bình luận</h6>
+        @foreach (var comment in Model.Comments)
+        {
+            @*  <p>@comment.Id - ParentId: @comment.ParentCommentId</p> *@
+            if (comment.ParentCommentId == null || comment.ParentCommentId == 0)
+            {
+                <div class="comment">
+                    <div class="comment-body">
+
+                        <div class="menu-container">
+                            <button class="menu-btn" onclick="toggleMenu('@comment.Id')">...</button>
+                        </div>
+
+                        <img src="~/img/360_F_65772719_A1UV5kLi5nCEWI0BNLLiFaBPEkUbv5Fv.jpg" alt="User Avatar" class="comment-avatar">
+                        <div class="comment-content">
+                            <div class="comment-author" id="author">@comment.UserName</div>
+                            <div class="comment-time">@comment.CreatedAt.ToString("g")</div>
+                            <div class="comment-text" id="commentText-@comment.Id">@Html.Raw(comment.Content)</div>
+
+                            <!-- Menu tùy chọn -->
+                            <div class="menu-options" id="menuOptions-@comment.Id" style="display: none;">
+                                <ul>
+                                    <li><a href="javascript:void(0);" onclick="editComment('@comment.Id')">Chỉnh sửa bình luận</a></li>
+                                    <li>
+                                        <form method="post" asp-page-handler="DeleteComment" asp-route-commentId="@comment.Id" >
+                                            <input type="hidden" name="Id" value="@comment.Id" />
+                                            <input type="hidden" name="lessonId" value="@comment.LessonId" />
+                                            <input type="hidden" name="courseId" asp-for="CourseId"/>
+                                            @if (comment.UserId == Model.CurrentUserId) // Kiểm tra nếu người dùng hiện tại là chủ của bình luận
+                                            {
+                                                <button type="submit">Xóa bình luận</button>
+                                            }
+                                        </form>
+                                    </li>
+                                    <li><a href="javascript:void(0);" onclick="reportComment('@comment.Id')">Báo cáo bình luận</a></li>
+                                </ul>
+                            </div>
+
+                            <form id="editCommentForm-@comment.Id" method="post" asp-page-handler="EditComment" asp-route-commentId="@comment.Id" asp-route-courseId="@Model.CourseId" asp-route-lessonId="@Model.LessonId" asp-route-userId="@Model.CurrentUserId" style="display:none;">
+                                <input type="hidden" name="Id" value="@comment.Id" />
+                                <input type="hidden" name="lessonId" value="@comment.LessonId" />
+                                <input type="hidden" asp-for="CurrentUserId" />
+                                <textarea name="EditedCommentContent" id="default" rows="3" style="width:100%;" required>@comment.Content</textarea>
+                                @if (comment.UserId == Model.CurrentUserId) // Kiểm tra nếu người dùng hiện tại là chủ của bình luận
+                                {
+                                    <button class="btn-edit" data-comment-id="@comment.Id" data-comment-content="@comment.Content">Sửa</button>
+                                }
+
+                                <button type="button" onclick="cancelEdit('@comment.Id')">Hủy bỏ</button>
+                            </form>
+
+
+                            <div class="comment-actions">
+                                <a href="javascript:void(0);" class="reply-btn" onclick="showReplyBox('@comment.Id')">Phản hồi</a>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- Display the reply count link if there are replies  -->
+                    @{
+                        var replies = Model.Comments.Where(r => r.ParentCommentId == comment.Id).ToList();
+                        if (replies.Any())
+                        {
+                            <div class="reply-toggle">
+                                <a href="javascript:void(0);" onclick="toggleReplies('@comment.Id')">
+                                    Xem @replies.Count câu trả lời
+                                </a>
+                            </div>
+                        }
+                    }
+
+                    <!-- Reply Box kkk -->
+                    <div class="reply-box" id="replyBox-@comment.Id" style="display:none;">
+                        <form method="post" asp-page-handler="AddReplyComment" onsubmit="return validateReplyForm('@comment.Id')">
+                            <input type="hidden" asp-for="CourseId" />
+                            <input type="hidden" asp-for="LessonId" />
+                            <input type="hidden" name="parentCommentId" value="@comment.Id" />
+                            <textarea name="CommentContent" id="default" placeholder="Nhập phản hồi của bạn"></textarea>
+                            <span id="replyError-@comment.Id" style="color: red; display: none;">Nội dung phản hồi không được để trống</span>
+
+                            <div class="comment-actions">
+                                <button type="button" class="btn-cancel" onclick="hideReplyBox('@comment.Id')">HỦY</button>
+                                <button type="submit" class="btn-submit">BÌNH LUẬN</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Display replies if available -->
+                    <div class="replies" id="replies-@comment.Id" style="display:none;">
+                        @foreach (var reply in replies)
+                        {
+                            <div class="reply">
+                                <div class="reply-body">
+                                    <img src="~/img/360_F_65772719_A1UV5kLi5nCEWI0BNLLiFaBPEkUbv5Fv.jpg" alt="User Avatar" class="comment-avatar">
+                                    <div class="reply-content">
+                                        <div class="comment-author">@reply.UserName</div>
+                                        <div class="comment-time">@reply.CreatedAt.ToString("g")</div>
+                                        <div class="comment-text">@Html.Raw(reply.Content)</div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
+
+
+
+    <!-- Code injected by live-server -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="text/javascript" id="www-widgetapi-script"
+            src="https://www.youtube.com/s/player/96d06116/www-widgetapi.vflset/www-widgetapi.js" async=""></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script src="~/tinymce/tinymce.min.js"></script>
+    <script src="~/js/tinymceConfig.js"></script>
+    <script src="https://cdn.ckeditor.com/4.14.0/standard/ckeditor.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="~/microsoft/signalr/dist/browser/signalr.js"></script>
+    <script src="~/microsoft/signalr/dist/browser/signalr.min.js"></script>
+
+    <script type="text/javascript" id="www-widgetapi-script"
+
+
+    <script>
+        function learning(courseId, lessonId) {
+            window.location.href = `LearningCourse?courseId=${courseId}&lessonId=${lessonId}`;
+        }
+        function showListVideo() {
+            let listChapter = document.querySelectorAll('.learning__item')
+            listChapter.forEach((chapterItem) => {
+                chapterItem.addEventListener('click', () => {
+                    chapterItem.classList.toggle('showListLesson')
+                })
+                let listVideoofChapter = chapterItem.querySelector('.learning__chapter-collapse')
+                listVideoofChapter.addEventListener('click', (e) => {
+                    e.stopPropagation()
+                })
+            })
+        }
+        showListVideo()
+
+        function handleLessonAction() {
+            let lessonNav = document.querySelector('.learning__lesson-nav')
+            let learningNav = document.querySelector('.learning__video-nav')
+            let learningContent = document.querySelector('.learning__video-content')
+            let closeNavBtn = document.querySelector('.close__nav-btn')
+            let overlayScreen = document.querySelector('.overlay-screen')
+            closeNavBtn.addEventListener('click', () => {
+                learningNav.classList.toggle('showNav')
+                overlayScreen.classList.toggle('showOverlay')
+                learningContent.classList.toggle('maxWidth')
+            })
+            overlayScreen.addEventListener('click', () => {
+                learningNav.classList.toggle('showNav')
+                overlayScreen.classList.toggle('showOverlay')
+                learningContent.classList.toggle('maxWidth')
+            })
+            lessonNav.addEventListener('click', () => {
+                learningNav.classList.toggle('showNav')
+                learningContent.classList.toggle('maxWidth')
+                lessonNav.classList.toggle('hasClick')
+                overlayScreen.classList.toggle('showOverlay')
+            })
+        }
+        handleLessonAction()
+    </script>
+    <script>
+
+        function startCountdown(seconds) {
+            let remainingTime = seconds;
+            let timeDisplay = document.getElementById("time-count-down");
+            const countdownInterval = setInterval(() => {
+                const hours = Math.floor(remainingTime / 3600);
+                const minutes = Math.floor((remainingTime % 3600) / 60);
+                const secs = remainingTime % 60;
+
+                let timeString = "";
+
+                if (hours > 0) {
+                    timeString += `${String(hours).padStart(2, '0')}:`;
+                }
+
+                if (hours > 0 || minutes > 0) {
+                    timeString += `${String(minutes).padStart(2, '0')}:`;
+                }
+
+                timeString += String(secs).padStart(2, '0');
+
+                console.log(timeString);
+                timeDisplay.innerHTML = timeString;
+                if (remainingTime <= 0) {
+                    clearInterval(countdownInterval);
+                    document.getElementById("form-quizz").submit();
+                    console.log("Countdown finished! Form submitted.");
+                }
+                remainingTime -= 1;
+            }, 1000);
+        }
+
+        startCountdown(@Model.CurrentLesson.Duration);
+        var arr = [];
+        //click vào chapter
+        // window.load
+        window.onload = function () {
+            //process open before chapter
+            var json_str = getCookieByName('chapterOpen');
+            arr = json_str ? JSON.parse(json_str) : [];
+            console.log(arr)
+
+            function getCookieByName(name) {
+                let cookies = document.cookie.split(';');
+                for (let cookie of cookies) {
+                    cookie = cookie.trim();
+                    if (cookie.startsWith(name + "=")) {
+                        return cookie.substring(name.length + 1);
+                    }
+                }
+                return null;
+            }
+
+
+            function ShowChapter() {
+                for (chapterClass of arr) {
+                    let chapter = document.querySelector("." + chapterClass);
+                    if (chapter) {
+                        chapter.classList.add("showListLesson");
+                    }
+                }
+            }
+
+            ShowChapter();
+            //process next/prev lesson
+            let currL = document.querySelector('.lesson-index-' + @Model.CurrentLesson.Id);
+            let prevL = currL ? currL.previousElementSibling : null;
+            let nextL = currL ? currL.nextElementSibling : null;
+            const learningPrevBtn = document.querySelector('.learning__lesson-prev');
+            const learningNextBtn = document.querySelector('.learning__lesson-next');
+
+
+            function extractLessonId(element) {
+                for (let cls of element.classList) {
+                    if (cls.startsWith("lesson-index-")) {
+                        return cls.replace("lesson-index-", "");
+                    }
+                }
+                return null;
+            }
+
+
+            if (prevL != null && prevL.classList.contains("canLearn")) {
+                learningPrevBtn.classList.add("actionActive");
+                learningPrevBtn.addEventListener('click', () => {
+                    let prevLessonId = extractLessonId(prevL);
+                    if (prevLessonId) {
+                        window.location.href = "LearningCourse?courseId=" + @Model.Course.Id + "&lessonId=" + prevLessonId;
+                    }
+                })
+            }
+            if (nextL != null && nextL.classList.contains("canLearn")) {
+                console.log(learningNextBtn)
+                learningNextBtn.classList.add("actionActive");
+                learningNextBtn.addEventListener('click', () => {
+                    let nextLessonId = extractLessonId(nextL);
+                    if (nextLessonId) {
+                        window.location.href = "LearningCourse?courseId=" + @Model.Course.Id + "&lessonId=" + nextLessonId;
+                    }
+                })
+            }
+        }
+        function saveChapterOpen(index) {
+            let className = "learning_chapter-index-" + index;
+            let chapter = document.querySelector("." + className);
+            console.log(className);
+            if (chapter.classList.contains('showListLesson')) {
+                let indexOfArr = arr.indexOf(className);
+                if (indexOfArr >= 0) {
+                    console.log("remove");
+                    arr.splice(indexOfArr, 1);
+                    SaveChapterCookie(arr);
+                }
+            } else {
+                arr.push(className);
+                SaveChapterCookie(arr);
+            }
+        }
+
+        function SaveChapterCookie(ar) {
+            console.log("ar:" + ar);
+            document.cookie = 'chapterOpen=' + JSON.stringify(ar);
+        }
+
+    </script>
+
+@*     //Comment
+ *@
+    <script>
+        // Tạo kết nối SignalR
+        var connection = new signalR.HubConnectionBuilder()
+            .withUrl("/commentHub")
+            .build();
+
+        connection.on("ReceiveComment", function (comments) {
+            console.log(comments);
+            updateCommentList(comments);
+        });
+
+        connection.start().catch(function (err) {
+            return console.error(err.toString());
+        });
+
+        // Hàm để cập nhật danh sách bình luận
+        function updateCommentList(comments) {
+            var commentSection = document.getElementById("commentSection");
+            var commentList = document.getElementById("comment-list");
+
+            comments.forEach(function (comment) {
+                var commentElement = document.createElement("div");
+                commentElement.classList.add("comment");
+
+                var commentBody = document.createElement("div");
+                commentBody.classList.add("comment-body");
+
+                var avatar = document.createElement("img");
+                avatar.src = "/img/360_F_65772719_A1UV5kLi5nCEWI0BNLLiFaBPEkUbv5Fv.jpg";
+                avatar.alt = "User Avatar";
+                avatar.classList.add("comment-avatar");
+
+                var commentContent = document.createElement("div");
+                commentContent.classList.add("comment-content");
+
+                var author = document.createElement("div");
+                author.classList.add("comment-author");
+                author.textContent = comment.userName;
+
+                var createdAt = document.createElement("div");
+                createdAt.classList.add("comment-time");
+                createdAt.innerText = new Date(comment.createdAt).toLocaleString();
+
+                var commentText = document.createElement("div");
+                commentText.classList.add("comment-text");
+                commentText.innerHTML = comment.content;
+
+                commentContent.appendChild(author);
+                commentContent.appendChild(createdAt);
+                commentContent.appendChild(commentText);
+
+                commentBody.appendChild(avatar);
+                commentBody.appendChild(commentContent);
+
+                var commentActions = document.createElement("div");
+                commentActions.classList.add("comment-actions");
+
+                var replyButton = document.createElement("a");
+                replyButton.href = "javascript:void(0);";
+                replyButton.classList.add("reply-btn");
+                replyButton.innerText = "Phản hồi";
+                replyButton.onclick = function () {
+                    showReplyBox(comment.id);
+                };
+
+                commentActions.appendChild(replyButton);
+                commentElement.appendChild(commentBody);
+                commentElement.appendChild(commentActions);
+
+                // Append comment to comment section
+                commentSection.appendChild(commentElement);
+            });
+        }
+
+    </script>
+
+
+    <script>
+
+
+function toggleMenu(commentId) {
+    const menu = document.getElementById(`menuOptions-${commentId}`);
+    if (menu.style.display === "none" || menu.style.display === "") {
+        menu.style.display = "block";
+    } else {
+        menu.style.display = "none";
+    }
+}
+// Hiển thị form chỉnh sửa bình luận
+function editComment(commentId) {
+    // Ẩn nội dung bình luận và hiển thị form chỉnh sửa
+    document.getElementById(`commentText-${commentId}`).style.display = 'none';
+    document.getElementById(`editCommentForm-${commentId}`).style.display = 'block';
+}
+
+// Hủy bỏ chỉnh sửa
+function cancelEdit(commentId) {
+    // Ẩn form chỉnh sửa và hiển thị lại nội dung bình luận
+    document.getElementById(`editCommentForm-${commentId}`).style.display = 'none';
+    document.getElementById(`commentText-${commentId}`).style.display = 'block';
+}
+
+
+
+// Hàm hiển thị/ẩn các câu trả lời
+function toggleReplies(commentId) {
+    var repliesElement = document.getElementById("replies-" + commentId);
+    if (repliesElement.style.display === "none") {
+        repliesElement.style.display = "block";
+    } else {
+        repliesElement.style.display = "none";
+    }
+}
+
+// Hàm hiển thị hộp trả lời
+function showReplyBox(commentId) {
+    document.getElementById("replyBox-" + commentId).style.display = "block";
+}
+
+// Hàm ẩn hộp trả lời
+function hideReplyBox(commentId) {
+    document.getElementById("replyBox-" + commentId).style.display = "none";
+}
+
+
+
+// Ẩn menu khi nhấp bên ngoài
+document.addEventListener("click", function (event) {
+    const menus = document.querySelectorAll(".menu-options");
+    menus.forEach(menu => {
+        if (!menu.contains(event.target) && !event.target.classList.contains("menu-btn")) {
+            menu.style.display = "none";
+        }
+    });
+});
+
+</script>
+
+
+    <script>
+        const openCommentBtn = document.getElementById('openCommentBtn');
+        const commentSection = document.getElementById('commentSection');
+        const cancelBtn = document.querySelector(".btn-cancel");
+
+        openCommentBtn.addEventListener('click', () => {
+            commentSection.classList.toggle('show');
+        });
+        cancelBtn.addEventListener("click", function () {
+            commentSection.classList.remove("show");
+        });
+
+        document.addEventListener('click', (event) => {
+            // Check if the click target is outside the comment section and the open button
+            if (!commentSection.contains(event.target) && !openCommentBtn.contains(event.target)) {
+                commentSection.classList.remove('show'); // Hide the comment section
+            }
+        });
+        document.querySelector('.btn-submit').addEventListener('click', function () {
+            console.log('Nút BÌNH LUẬN đã được nhấn');
+        });
+
+        document.querySelector('.btn-cancel').addEventListener('click', function () {
+            console.log('Nút HỦY đã được nhấn');
+        });
+
+    </script>
+
+
+
+</body>

@@ -1,0 +1,498 @@
+﻿@page
+@model E_Learning_Course.WebApp.Pages.Admin.Courses.LessonModel
+@{
+    Layout = "_ManagementLayout";
+}
+<div class="popular-courses">
+    <div class="mt-5">
+        <a class="ms-5 text-decoration-none fs-2 p-0 back__page-btn" href="/Admin/Courses/List">
+            <span><i class="fa-solid fa-caret-left"></i></span>
+            <span class="">Chapter</span>
+        </a>
+    </div>
+    <h2 class="courses-title mt-5 px-5">Điều hành khóa học</h2>
+    <div class="popular-header px-5">
+        <p class="popular-des">Học sáng tạo, thành công vượt trội</p>
+        <!-- <button class="popular-button">Add course</button> -->
+    </div>
+    <div class="row mt-4 px-5">
+        <div class="col-6 d-flex align-items-center">
+            <span class="fs-3 me-3">Choose type</span>
+            <select id="lessonType" asp-for="Lesson.Type" class="drop-show_number">
+                <option value="Video">Video</option>
+                <option value="Quizz">Quizz</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="container mt-5">
+        <div class="courses-container">
+            <!-- video form -->
+            <form id="videoForm" asp-page-handler="AddVideoLesson" method="POST" style="margin: 20px;" enctype="multipart/form-data">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <input type="hidden" asp-for="Lesson.Id" value="@Model.Lesson.Id" />
+                <input type="hidden" asp-for="Lesson.ChapterId" value="@Model.Lesson.ChapterId" />
+                <div class="mb-3">
+                    <label class="form-label fs-4" asp-for="Lesson.Name"></label>
+                    <input type="text" asp-for="Lesson.Name" value="@Model.Lesson.Name" class="form-control fs-3 p-2">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fs-4" asp-for="Lesson.Content"></label>
+                    <textarea type="text" class="form-control fs-3 p-2" asp-for="Lesson.Content" value="@Model.Lesson.Content">@Model.Lesson.Content</textarea>
+                </div>
+
+
+                <label class="form-label fs-4">Video upload</label>
+                <div class="mb-3 box-upload_file">
+                    <div id="dropArea" class="drop-area">
+                        <input type="file" asp-for="@Model.VideoUrl" id="videoUpload" class="file-input" style="display: none;">
+                        <div id="uploadIcon" class="upload-icon" onclick="document.getElementById('videoUpload').click();">
+                            <i class="fa-solid fa-upload"></i>
+                            <p>Kéo thả video vào đây hoặc click để chọn</p>
+                        </div>
+                        <video id="videoPreview" width="100%" src="@Model.Lesson.VideoUrl" controls></video>
+                    </div>
+                </div>
+
+
+                <div class="mb-3">
+                    <label class="form-label fs-4">Passing Threshold (seconds): <span id="passingValue">@Model.Lesson.Passing</span> s</label>
+                    <input type="range" id="passingSlider" min="0" step="0.1" value="@Model.Lesson.Passing" style="width: 100%;" onchange="updatePassingValue(this.value)">
+                    <input type="hidden" asp-for="Lesson.Passing" id="passingInput" />
+                    <input type="hidden" asp-for="Lesson.Duration" id="durationInput" value="@Model.Lesson.Duration" />
+                </div>
+                <button type="submit" class="btn btn-primary fs-4 px-5 py-3">Add lession</button>
+            </form>
+
+            <form id="quizForm" method="POST" asp-page-handler="AddQuizLesson" style="margin: 20px;">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <input type="hidden" asp-for="Lesson.Id" value="@Model.Lesson.Id" />
+                <input type="hidden" asp-for="Lesson.ChapterId" value="@Model.Lesson.ChapterId" />
+                <div class="mb-3">
+                    <label class="form-label fs-4" asp-for="Lesson.Name"></label>
+                    <input type="text" asp-for="Lesson.Name"  class="form-control fs-3 p-2">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fs-4" asp-for="Lesson.Content"></label>
+                    <textarea type="text" class="form-control fs-3 p-2" asp-for="Lesson.Content" value="@Model.Lesson.Content">@Model.Lesson.Content</textarea>
+                </div>
+                <ul class="learning__list quiz__list h-100">
+
+
+                    @if (Model.Lesson.Questions != null)
+                    {
+                        @for (int i = 0; i < Model.Lesson.Questions.Count; i++)
+                        {
+                            <li class="learning__item">
+                                <div class="learning__chapter-panel learning__chapter-1">
+                                    <h2 class="learning__chapter-name mb-0 d-flex align-items-center justify-content-between"
+                                        style="width: 97.2%;">
+                                        <span>@(i + 1)</span>
+                                        <input type="text" class="learning_input-quiz learning_input-question"
+                                               asp-for="Lesson.Questions[i].QuestionText" value="@Model.Lesson.Questions[i].QuestionText">
+                                        <input type="hidden" asp-for="Lesson.Questions[i].Id" value="@Model.Lesson.Questions[i].Id" />
+                                        <span class="remove_question-btn">
+                                            <a class="text-decoration-none text-danger"
+                                               data-item-type="Question"
+                                               data-item-id="@Model.Lesson.Questions[i].Id"
+                                               data-lesson-id="@Model.Lesson.Id"
+                                               data-bs-toggle="modal"
+                                               data-bs-target="#confirmDeleteModal">
+                                                <i class="fa-solid fa-delete-left"></i>
+                                            </a>
+                                        </span>
+                                    </h2>
+                                </div>
+                                <div class="learning__chapter-collapse">
+                                    @for (int j = 0; j < Model.Lesson.Questions[i].Answers.Count; j++)
+                                    {
+                                        <div class="learning__lesson-item video-index-0-0 d-flex align-items-center justify-content-between">
+                                            <span class="me-3">
+                                                <input type="checkbox"
+                                                       name="Lesson.Questions[@i].Answers[@j].IsCorrect"
+                                                       value="true"
+                                                @(Model.Lesson.Questions[i].Answers[j].IsCorrect ? "checked" : "") />
+                                                <input hidden value="@Model.Lesson.Questions[i].Answers[j].Id" asp-for="Lesson.Questions[i].Answers[j].Id" />
+                                            </span>
+                                            <h5 class="learning__lesson-item-name w-100 me-2">
+                                                <input type="text"
+                                                       class="learning_input-quiz learning_input-quiz"
+                                                       asp-for="Lesson.Questions[i].Answers[j].AnswerText"
+                                                       value="@Model.Lesson.Questions[i].Answers[j].AnswerText"
+                                                       style="width: 99%;">
+                                            </h5>
+                                            <span class="remove_answer-btn">
+                                                <a class="text-decoration-none text-danger"
+                                                   data-item-type="Answer"
+                                                   data-item-id="@Model.Lesson.Questions[i].Answers[j].Id"
+                                                   data-lesson-id="@Model.Lesson.Id"
+                                                   data-bs-toggle="modal"
+                                                   data-bs-target="#confirmDeleteModal">
+                                                    <i class="fa-solid fa-square-minus fs-3"></i>
+                                                </a>
+                                            </span>
+                                        </div>
+                                    }
+                                    <div class="learning__lesson-item learning_lesson-add" onclick="addAnswer(@i)">
+                                        <h5 class="mb-0 text-white">Add more</h5>
+                                    </div>
+                                </div>
+                            </li>
+                        }
+                    }
+                    <li class="mb-3" id="add_question-btn">
+                        <div class="question__add-btn learning__chapter-2 btn btn-primary d-flex align-items-center justify-content-center p-3 rounded shadow-sm">
+                            <h2 class="learning__chapter-name w-100 mb-0 text-white fs-5 d-flex align-items-center">
+                                <span class="me-2"><i class="fa-solid fa-plus"></i></span>
+                                <span>Add more question</span>
+                            </h2>
+                        </div>
+                    </li>
+                    <div class="mb-3">
+                        <label class="form-label fs-4" asp-for="Lesson.Duration"></label>
+                        <input type="number" class="form-control fs-3 p-2" asp-for="Lesson.Duration" /></input>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fs-4" asp-for="Lesson.Passing"></label>
+                        <input type="number" class="form-control fs-3 p-2" asp-for="Lesson.Passing"></input>
+                    </div>
+                    <button type="submit" class="btn btn-primary fs-4 px-5 py-3 mt-5">Save quiz</button>
+                </ul>
+            </form>
+            <!-- quizz -->
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fs-4" id="confirmDeleteModalLabel">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body fs-4">
+                Are you sure you want to delete this item?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary fs-5" data-bs-dismiss="modal">Cancel</button>
+                <a id="confirmDeleteButton" href="#" class="btn btn-danger fs-5">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+@* Toast message *@
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+    <!-- Success Toast -->
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+        @if (TempData["ToastMessage"] != null)
+        {
+            string toastType = TempData["ToastType"] as string;
+            string toastClass = toastType == "success" ? "bg-success text-white" :
+            toastType == "fail" ? "bg-danger text-white" :
+            "bg-warning text-dark";
+            string headerText = toastType == "success" ? "Success" :
+            toastType == "fail" ? "Error" :
+            "Warning";
+            string btnCloseClass = toastType == "success" || toastType == "fail" ? "btn-close-white" : "btn-close-dark";
+
+            <div class="toast show align-items-center @toastClass border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+                <div class="toast-header @toastClass">
+                    <strong class="me-auto fs-4">@headerText</strong>
+                    <button type="button" class="btn-close @btnCloseClass ms-2 ms-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body bg-white text-dark py-3 fs-4">
+                    @TempData["ToastMessage"]
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var toastElement = document.querySelector('.toast.show');
+        if (toastElement) {
+            var toast = new bootstrap.Toast(toastElement);
+            toast.show();
+        }
+
+        var confirmDeleteModal = document.getElementById('confirmDeleteModal');
+        var confirmDeleteButton = document.getElementById('confirmDeleteButton');
+        var contentModal = document.querySelector('.modal-body');
+        confirmDeleteModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget; // Thẻ <a> kích hoạt modal
+            var itemType = button.getAttribute('data-item-type');
+            var itemId = button.getAttribute('data-item-id');
+            console.log(itemType);
+
+            var lessonId = button.getAttribute('data-lesson-id');
+            contentModal.innerHTML = "Are you sure you want to delete this " + itemType;
+            // Cập nhật nội dung modal và href của nút xóa
+            if (itemType == "Question") {
+                confirmDeleteButton.href = `?handler=DeleteQuestion&questionId=${itemId}&lessonId=${lessonId}`;
+            } else {
+                confirmDeleteButton.href = `?handler=DeleteAnswer&answerId=${itemId}&lessonId=${lessonId}`;
+            }
+        });
+    });
+
+
+</script>
+
+<script>
+    const videoUpload = document.getElementById('videoUpload');
+    const videoPreview = document.getElementById('videoPreview');
+    const passingSlider = document.getElementById('passingSlider');
+    const passingValue = document.getElementById('passingValue');
+    const passingInput = document.getElementById('passingInput');
+
+    // Khi video được tải lên
+    videoUpload.addEventListener('change', function (event) {
+        const file = event.target.files[0];
+
+        if (file && file.type.startsWith('video/')) {
+            const videoURL = URL.createObjectURL(file);
+            videoPreview.src = videoURL;
+            videoPreview.style.display = 'block';
+
+            // Đợi video tải lên và tính toán độ dài
+            videoPreview.onloadedmetadata = function () {
+                const videoDuration = videoPreview.duration;
+
+                // Đặt max của slider là độ dài của video (duration)
+                passingSlider.max = videoDuration;
+                passingSlider.value = 0; // Bắt đầu từ 0 nếu chưa có giá trị
+                passingValue.innerText = '0'; // Hiển thị 0 giây lúc đầu
+                document.getElementById('durationInput').value = videoDuration; // Gán Duration thực tế
+            };
+        }
+    });
+
+    // Cập nhật giá trị Passing khi di chuyển slider
+    function updatePassingValue(value) {
+        passingValue.innerText = parseFloat(value).toFixed(1); // Hiển thị giá trị hiện tại trên slider
+        passingInput.value = value; // Gán giá trị vào input ẩn để submit
+    }
+</script>
+<script>
+    const lessonTypeSelect = document.getElementById('lessonType');
+    const videoForm = document.getElementById('videoForm');
+    const quizForm = document.getElementById('quizForm');
+
+    // Khi trang được tải, hiển thị form phù hợp với Lesson.Type hiện tại
+    document.addEventListener('DOMContentLoaded', function () {
+        const currentType = "@Model.Lesson.Type"; // Lấy Lesson.Type từ server
+        if (!currentType || currentType === "Video") {
+            videoForm.style.display = 'block';
+            quizForm.style.display = 'none';
+        } else if (currentType === "Quizz") {
+            quizForm.style.display = 'block';
+            videoForm.style.display = 'none';
+        }
+    });
+
+    // Lắng nghe sự kiện thay đổi khi người dùng chọn kiểu bài học
+    lessonTypeSelect.addEventListener('change', function () {
+        const selectedType = this.value;
+
+        if (selectedType === 'Video') {
+            videoForm.style.display = 'block';
+            quizForm.style.display = 'none';
+        } else if (selectedType === 'Quizz') {
+            quizForm.style.display = 'block';
+            videoForm.style.display = 'none';
+        }
+    });
+</script>
+<script>
+
+
+    // Sử dụng event delegation để lắng nghe sự kiện click trên phần tử cha
+    document.querySelector('.learning__list').addEventListener('click', function (e) {
+        // Kiểm tra nếu người dùng click vào nút 'Remove question' (xoá câu hỏi)
+        if (e.target && e.target.closest('.remove_question-btn')) {
+            const questionItem = e.target.closest('.learning__item');
+
+            // Xoá phần tử cha 'learning__item' chứa câu hỏi
+            if (questionItem) {
+                questionItem.remove();
+            }
+        }
+
+        // Kiểm tra nếu người dùng click vào nút 'Remove lesson' (xoá bài học)
+        if (e.target && e.target.closest('.remove_lesson-btn')) {
+            const lessonItem = e.target.closest('.learning__lesson-item');
+
+            // Xoá phần tử cha 'learning__lesson-item' chứa bài học
+            if (lessonItem) {
+                lessonItem.remove();
+            }
+        }
+    });
+
+
+    document.getElementById('add_question-btn').addEventListener('click', function () {
+        // Lấy danh sách ul
+        const learningList = document.querySelector('.learning__list');
+
+        // Tạo phần tử li mới
+        const newQuestion = document.createElement('li');
+        newQuestion.classList.add('learning__item');
+
+        // Tạo nội dung cho câu hỏi và các đáp án
+        let listQuestion = document.querySelectorAll('.learning__item');
+        let questionCount = listQuestion.length;
+        newQuestion.innerHTML = `<div class="learning__chapter-panel learning__chapter-2">
+                                               <h2 class="learning__chapter-name mb-0 d-flex align-items-center justify-content-between"
+                                                        style="width: 97.2%;">
+                                                        <span>${questionCount + 1}.</span>
+                                                        <input type="text" class="learning_input-quiz learning_input-question" name="Lesson.Questions[${questionCount}].QuestionText">
+                                                        <input type="hidden" name="Lesson.Questions[${questionCount}].Id" value="0" />
+                                                        <span class="remove_question-btn"><i
+                                                                class="fa-solid fa-delete-left"></i>
+                                                        </span>
+                                                    </h2>
+                                                </div>
+                                                <div class="learning__chapter-collapse">
+                                                    <div class="learning__lesson-item learning_lesson-add" onclick="addAnswer(${questionCount})">
+                                                        <h5 class="mb-0 text-white">Add more</h5>
+                                                    </div>
+                                                </div>`;
+        // Thêm phần tử mới vào trước nút add_question-btn
+        learningList.insertBefore(newQuestion, document.getElementById('add_question-btn'));
+    });
+
+    let learningQuestion = document.querySelectorAll('.learning_input-question')
+    console.log(learningQuestion);
+
+    learningQuestion.forEach(question => {
+        question.addEventListener('click', (e) => {
+            e.stopPropagation()
+        })
+    });
+    // // Lấy tham chiếu đến select và các form
+    // const lessonTypeSelect = document.getElementById('lessonType');
+    // const videoForm = document.getElementById('videoForm');
+    // const quizForm = document.getElementById('quizForm');
+
+    // // Sự kiện khi thay đổi loại lesson (video hoặc quiz)
+    // lessonTypeSelect.addEventListener('change', function () {
+    //     const selectedType = this.value; // Lấy giá trị được chọn từ select
+
+    //     if (selectedType === 'video') {
+    //         // Hiển thị form video và ẩn form quiz
+    //         videoForm.style.display = 'block';
+    //         quizForm.style.display = 'none';
+    //     } else if (selectedType === 'quiz') {
+    //         // Hiển thị form quiz và ẩn form video
+    //         quizForm.style.display = 'block';
+    //         videoForm.style.display = 'none';
+    //     }
+    // });
+
+    // // Khởi tạo trạng thái ban đầu (hiển thị form video nếu chọn video, hoặc quiz nếu chọn quiz)
+    // document.addEventListener('DOMContentLoaded', function () {
+    //     // Mặc định hiển thị form tương ứng khi load trang
+    //     if (lessonTypeSelect.value === 'video') {
+    //         videoForm.style.display = 'block';
+    //         quizForm.style.display = 'none';
+    //     } else {
+    //         quizForm.style.display = 'block';
+    //         videoForm.style.display = 'none';
+    //     }
+    // });
+
+    function addAnswer(questionIndex) {
+        let questionItem = document.querySelectorAll('.learning__item')[questionIndex];
+        let answerCount = questionItem.querySelectorAll('.learning__lesson-item').length - 1;
+
+        let newAnswer = `
+            <div class="learning__lesson-item d-flex align-items-center justify-content-between">
+                    <span class="me-3">
+                        <input type="checkbox" name="Lesson.Questions[${questionIndex}].Answers[${answerCount}].IsCorrect" value="false" onclick="this.value = this.checked ? 'true' : 'false'" />
+                        <input hidden value="0" name="Lesson.Questions[${questionIndex}].Answers[${answerCount}].Id" />
+                    </span>
+                   <h5 class="learning__lesson-item-name w-100 me-2">
+                        <input type="text" name="Lesson.Questions[${questionIndex}].Answers[${answerCount}].AnswerText" value="" style="width: 99%;">
+                  </h5>
+                       <span class="remove_lesson-btn" onclick="addAnswer(${questionItem})">
+                       <i class="fa-solid fa-square-minus fs-3"></i>
+                  </span>
+            </div>`;
+        questionItem.querySelector('.learning__chapter-collapse').insertAdjacentHTML('beforeend', newAnswer);
+    }
+
+    function showListVideo() {
+        // Gắn sự kiện lên phần tử cha của tất cả các .learning__item
+        const learningList = document.querySelector('.learning__list');
+
+        learningList.addEventListener('click', function (e) {
+            // Kiểm tra nếu người dùng nhấn vào phần tử có class .learning__item
+            if (e.target.closest('.learning__item')) {
+                const chapterItem = e.target.closest('.learning__item');
+
+                // Kiểm tra nếu không phải là click vào phần tử con bên trong .learning__chapter-collapse
+                if (!e.target.closest('.learning__chapter-collapse')) {
+                    // Toggle class để mở hoặc đóng danh sách lesson
+                    chapterItem.classList.toggle('showListLesson');
+                }
+            }
+        });
+
+        // Ngăn chặn sự kiện nổi bọt khi nhấn vào phần tử trong .learning__chapter-collapse
+        learningList.addEventListener('click', function (e) {
+            if (e.target.closest('.learning__chapter-collapse')) {
+                // Ngăn chặn sự kiện nổi bọt
+                e.stopPropagation();
+            }
+        });
+    }
+
+    // Gọi hàm sau khi DOM đã tải
+    showListVideo();
+
+</script>
+
+<script>
+    // Khu vực upload ảnh
+    const dropAreaImage = document.getElementById('dropAreaImage');
+    const fileInputImage = document.getElementById('imageUpload');
+    const imagePreview = document.getElementById('imagePreview');
+    const uploadIconImage = document.getElementById('uploadIconImage');
+
+    // Mở file dialog khi click vào biểu tượng upload (ảnh)
+    uploadIconImage.addEventListener('click', () => {
+        fileInputImage.click();
+    });
+
+    // Xử lý khi file được chọn hoặc kéo thả (ảnh)
+    fileInputImage.addEventListener('change', handleImageFiles);
+    dropAreaImage.addEventListener('dragover', (event) => {
+        event.preventDefault();
+        dropAreaImage.classList.add('dragging');
+    });
+
+    dropAreaImage.addEventListener('dragleave', () => {
+        dropAreaImage.classList.remove('dragging');
+    });
+
+    dropAreaImage.addEventListener('drop', (event) => {
+        event.preventDefault();
+        dropAreaImage.classList.remove('dragging');
+        const files = event.dataTransfer.files;
+        handleImageFiles({ target: { files } });
+    });
+
+    function handleImageFiles(event) {
+        const file = event.target.files[0];
+
+        if (file && file.type.startsWith('image/')) {
+            const imageURL = URL.createObjectURL(file);
+            imagePreview.src = imageURL;
+            imagePreview.style.display = 'block';
+            uploadIconImage.style.display = 'none'; // Ẩn icon sau khi upload
+        }
+    }
+
+</script>

@@ -1,0 +1,114 @@
+﻿@page
+@model E_Learning_Course.WebApp.Pages.Admin.Users.UpdateModel
+@{
+    Layout = "_ManagementLayout";
+}
+
+<div class="popular-courses">
+    <div class="popular-header px-5">
+        <p class="popular-des">Làm khác để làm tốt</p>
+    </div>
+
+    <div class="container mt-5">
+        <div class="courses-container"></div>
+        <div class="courses-item learned-false index-1 ">
+            <div class="courses-item__link text-center rounded align-items-center d-flex justify-content-center bg-warning"
+                 style="background: rgb(0,15,36);
+                         background: linear-gradient(90deg, rgba(0,15,36,1) 0%, rgba(9,70,121,1) 35%, rgba(0,185,255,1) 100%);">
+                <img id="avatarPreview" style="width: 150px; height: 150px; border-radius: 50%;"
+                     src="@Model.User.AvatarUrl"
+                     alt="Avatar Preview">
+            </div>
+            <div class="course-info">
+                <h2>Nhân viên</h2>a
+                <h3 style="color:red">@Model.Mess</h3>
+
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <form method="post" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="userName" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="userName" asp-for="User.UserName" readonly>
+                        <span asp-validation-for="User.UserName" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" asp-for="User.Email" readonly>
+                        <span asp-validation-for="User.Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="phoneNumber" class="form-label">Phone Number</label>
+                        <input type="text" class="form-control" id="phoneNumber" asp-for="User.PhoneNumber">
+                        <span asp-validation-for="User.PhoneNumber" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label for="dateOfBirth" class="form-label">Date of Birth</label>
+                        <input type="date" class="form-control" id="dateOfBirth" asp-for="User.DateOfBirth">
+                        <span asp-validation-for="User.DateOfBirth" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label for="role" class="form-label">Role</label>
+                        <select class="form-control" id="role" asp-for="User.SelectedRole">
+                            <option value="">Select a role</option>
+                            @foreach (var role in Model.Roles)
+                            {
+                                <!option value="@role" @(role == Model.User.SelectedRole ? "selected" : "")>@role</!option>
+                            }
+                        </select>
+                        <span asp-validation-for="User.SelectedRole" class="text-danger"></span>
+                    </div>
+
+
+
+
+                    @* Input for updating the avatar *@
+                    <div class="mb-3">
+                        <label for="avatar" class="form-label">Avatar</label>
+                        <input type="file" class="form-control" id="avatar" asp-for="User.Avatar" accept="image/*" onchange="previewAvatar(event)">
+                        <span asp-validation-for="User.Avatar" class="text-danger"></span>
+
+                        <!-- Hiển thị ảnh cũ nếu có -->
+                        @* <div class="mt-2">
+                            @if (!string.IsNullOrEmpty(@Model.AvatarUrl))
+                            {
+                                <img id="avatarPreview" src="@Model.AvatarUrl" alt="Current Avatar" class="img-fluid" style="max-width: 150px; max-height: 150px; border-radius: 50%;" />
+                            }
+                            else
+                            {
+                                <img id="avatarPreview" src="https://via.placeholder.com/150" alt="No Avatar" class="img-fluid" style="max-width: 150px; max-height: 150px; border-radius: 50%;" />
+                            }
+                        </div> *@
+                    </div>
+                    <input type="hidden" asp-for="AvatarUrl" value="@Model.User.AvatarUrl" />
+
+                    <button type="submit" class="btn btn-signin">Update</button>
+                </form>
+
+                @* Success message *@
+                @if (ViewData.ModelState.ContainsKey("") && ViewData.ModelState[""].Errors.Count > 0)
+                {
+                    <div class="alert alert-success mt-3">
+                        @ViewData.ModelState[""].Errors[0].ErrorMessage
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function previewAvatar(event) {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+            const imgElement = document.getElementById('avatarPreview');
+            imgElement.src = e.target.result;
+        }
+
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+    }
+</script>

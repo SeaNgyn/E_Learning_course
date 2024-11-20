@@ -1,0 +1,348 @@
+﻿﻿
+@page "{id:int}"
+@model E_Learning_Course.WebApp.Pages.Admin.Courses.DetailModel
+@{
+    Layout = "_ManagementLayout";
+}
+<div class="popular-courses">
+    <h2 class="courses-title mt-5 px-5">Điều hành khóa học</h2>
+    <div class="popular-header px-5">
+        <p class="popular-des">Học sáng tạo, thành công vượt trội</p>
+        <!-- <button class="popular-button">Add course</button> -->
+    </div>
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+    <div class="row px-5 ">
+        <div class="col-md-4">
+            <img src="@Model.CourseDetail.Thumbnail"
+                 alt="Khóa Học" class="img-fluid rounded">
+        </div>
+        <div class="col-md-8">
+            <div class="">
+                <h3 style="display: inline-block;" class="mb-3">Số người đã tham gia khóa học: @Model.AmountEnrollment người</h3>
+                <div style="display:inline" class="h4">
+                    <a style="display:inline; text-decoration:none" asp-page="/Admin/Enrollment/ManageEnrollment" asp-route-id="@Model.courseId">- Chi tiết</a>
+                </div>
+                <h2 class="mb-3">Tên Khóa Học:@Model.CourseDetail.Title</h2>
+                <p class="fs-3"><strong>Thể loại:</strong>@Model.CourseDetail.CategoryName </p>
+                <p class="fs-3"><strong>Số bài:</strong>@Model.CourseDetail.Lessons</p>
+                <p class="fs-3"><strong>Số người học:</strong> @Model.CourseDetail.Enrollments</p>
+                <p class="fs-3"><strong>Giá tiền:</strong>@Model.CourseDetail.Price.ToString("#,##0")  VNĐ</p>
+                <p class="fs-3"><strong>Trạng thái khóa học:</strong>@Model.CourseDetail.Status</p>
+                @if (Model.HasAccess)
+                {
+                    <a href="/Admin/Courses/Update/@Model.CourseDetail.Id" class="btn btn-primary fs-4 px-4 py-2">Chỉnh sửa</a>
+                }
+                <div class="mt-4">
+                    <form asp-page-handler="ChangeStatus" method="post">
+                        <input type="hidden" name="courseId" value="@Model.CourseDetail.Id" />
+                        <input type="hidden" id="reviewSuccess" name="reviewSuccess" value="false" />
+
+                        @if ((Model.CourseDetail.Status == "Unpublished" || Model.CourseDetail.Status == "Editing") && Model.HasAccess == true)
+                        {
+                            <button type="submit" class="btn btn-warning fs-4 px-4 py-2" onclick="setReviewSuccess(true)">Send for Review</button>
+                        }
+                        else if (Model.CourseDetail.Status == "InReview" && User.IsInRole("Administrator"))
+                        {
+                            <button type="submit" class="btn btn-secondary fs-4 px-4 py-2" onclick="setReviewSuccess(true)">Accept</button>
+                            <button type="submit" class="btn btn-danger fs-4 px-4 py-2" onclick="setReviewSuccess(false)">Refuse</button>
+                        }
+                        else if (Model.CourseDetail.Status == "Published" && User.IsInRole("Administrator"))
+                        {
+                            <button type="submit" class="btn btn-warning fs-4 px-4 py-2" onclick="setReviewSuccess(false)">Maintain</button>
+                        }
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fs-4" id="confirmDeleteModalLabel">Confirm Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body fs-4">
+                    Are you sure you want to delete this item?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary fs-5" data-bs-dismiss="modal">Cancel</button>
+                    <a id="confirmDeleteButton" href="#" class="btn btn-danger fs-5">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+        <!-- Success Toast -->
+        <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+            @if (TempData["ToastMessage"] != null)
+            {
+                string toastType = TempData["ToastType"] as string;
+                string toastClass = toastType == "success" ? "bg-success text-white" :
+                toastType == "fail" ? "bg-danger text-white" :
+                "bg-warning text-dark";
+                string headerText = toastType == "success" ? "Success" :
+                toastType == "fail" ? "Error" :
+                "Warning";
+                string btnCloseClass = toastType == "success" || toastType == "fail" ? "btn-close-white" : "btn-close-dark";
+
+                <div class="toast show align-items-center @toastClass border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+                    <div class="toast-header @toastClass">
+                        <strong class="me-auto fs-4">@headerText</strong>
+                        <button type="button" class="btn-close @btnCloseClass ms-2 ms-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body bg-white text-dark py-3 fs-4">
+                        @TempData["ToastMessage"]
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    @*  <div class="row mt-4 px-5">
+    <div class="col-6 d-flex align-items-center">
+    <span class="fs-3 me-3">Show</span>
+    <select class="drop-show_number">
+    <option value="">5</option>
+    <option value="">10</option>
+    <option value="">15</option>
+    </select>
+    <span class="fs-3 ms-3">Chapter</span>
+    </div>
+    <div class="col-6">
+    <div class="d-flex align-items-center justify-content-end">
+    <div class="">
+    <div class="sort-btn_manager">
+    <span class="sort-title">Sort by</span>
+    <i class="fa-solid fa-sort"></i>
+    <div class="sort_fields">
+    <ul>
+    <li>
+    <input type="radio" name="sortBy" id="name" />
+    <label for="name"><span>Name</span></label>
+    </li>
+    <li>
+    <input type="radio" name="sortBy" id="price" />
+    <label for="price"><span>Price</span></label>
+    </li>
+    <li>
+    <input type="radio" name="sortBy" id="view" />
+    <label for="view"><span>View</span></label>
+    </li>
+    <li>
+    <input type="radio" name="sortBy" id="date" />
+    <label for="date"><span>Date</span></label>
+    </li>
+    </ul>
+    </div>
+    </div>
+
+    </div>
+    <div class="">
+    <!-- <div class="filter-btn_manager">
+    <span class="filter-title">Filter</span>
+    <i class="fa-solid fa-filter"></i>
+    </div> -->
+    </div>
+    </div>
+    </div>
+    </div> *@
+
+    @functions {
+        public string ConvertToTimeFormat(double? duration)
+        {
+            if (duration == null || duration <= 0)
+            {
+                return "00:00:00";
+            }
+
+            TimeSpan time = TimeSpan.FromSeconds(duration.Value);
+
+            return string.Format("{0:D2}:{1:D2}:{2:D2}",
+            (int)time.TotalHours,
+            time.Minutes,
+            time.Seconds);
+        }
+    }
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <form id="chapterForm" method="post">
+        <input type="hidden" name="courseId" value="@Model.CourseDetail.Id" />
+        <div class="container mt-5">
+            <div class="courses-container">
+                <ul class="learning__list h-100">
+                    @for (int i = 0; i < Model.Chapters.Count; i++)
+                    {
+                        <li class="learning__item">
+                            <div class="learning__chapter-panel learning__chapter-1">
+                                <h2 class="learning__chapter-name d-flex align-items-center justify-content-between" style="width: 97.2%;">
+                                    <span>@(i + 1)</span>
+                                    <input type="hidden" asp-for="Chapters[i].Id" value="@Model.Chapters[i].Id" />
+                                    <input type="hidden" asp-for="Chapters[i].CourseId" value="@Model.Chapters[i].CourseId" />
+                                    <input type="text" class="learning_input-quiz learning_input-question"
+                                           asp-for="Chapters[i].Name" value="@Model.Chapters[i].Name" />
+                                    <span class="remove_question-btn">
+                                        <a class="text-decoration-none text-danger"
+                                           data-item-id="@Model.Chapters[i].Id"
+                                           data-course-id="@Model.Chapters[i].CourseId"
+                                           data-bs-toggle="modal"
+                                           data-bs-target="#confirmDeleteModal">
+                                            <i class="fa-solid fa-delete-left"></i>
+                                        </a>
+                                    </span>
+                                </h2>
+                                <span class="learning__chapter-progress">@Model.Chapters[i].Lessons.Count | @ConvertToTimeFormat(Model.Chapters[i].Duration)</span>
+                            </div>
+                            <div class="learning__chapter-collapse">
+                                @foreach (var lesson in Model.Chapters[i].Lessons)
+                                {
+                                    <div class="manage__learning_lesson learning__lesson-item video-index-0-0 ">
+                                        <a class="text-decoration-none" asp-page="/Admin/Courses/Lesson"
+                                           asp-route-lessonId="@lesson.Id"
+                                           asp-route-chapterId="@Model.Chapters[i].Id">
+                                            <h5 class="learning__lesson-item-name">1. @lesson.Name</h5>
+                                            <p class="learning__lesson-item-time mb-0">@ConvertToTimeFormat(lesson.Duration)</p>
+                                        </a>
+                                    </div>
+                                }
+                                <div class="">
+                                    <a class="learning__lesson-item learning_lesson-add text-decoration-none d-block fs-5 mb-0 text-white w-100" asp-page="/Admin/Courses/Lesson"
+                                       asp-route-lessonId="0"
+                                       asp-route-chapterId="@Model.Chapters[i].Id">Add more</a>
+                                </div>
+                            </div>
+                        </li>
+                    }
+
+                    <!-- Thêm chương mới -->
+                    @for (int j = 0; j < Model.NewChapters.Count; j++)
+                    {
+                        <li class="learning__item">
+                            <div class="learning__chapter-panel learning__chapter-new">
+                                <h2 class="learning__chapter-name d-flex align-items-center justify-content-between" style="width: 97.2%;">
+                                    <span>New @(j + 1).</span>
+                                    <input type="text" class="learning_input-quiz learning_input-question"
+                                           asp-for="NewChapters[j].Name" value="" placeholder="Input new chapter name..." />
+                                </h2>
+                            </div>
+                        </li>
+                    }
+
+                    <!-- Nút thêm chương mới -->
+                    <li class="learning__item showListLesson" id="add_chapter-btn">
+                        <div class="learning__chapter-panel learning__chapter-add-btn learning__chapter-1 d-flex align-items-center">
+                            <span><i class="fa-solid fa-plus fs-3 fw-bold me-3"></i></span>
+                            <h2 class="learning__chapter-name mb-0 d-flex align-items-center justify-content-between" style="width: 97.2%;">Add more chapters</h2>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            @if (Model.HasAccess)
+            {
+                <button type="submit" class="btn btn-primary fs-4 px-5 py-3 mt-2 mb-5 save-chapter_btn">
+                    Save chapters
+                </button>
+            }
+        </div>
+    </form>
+
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var toastElement = document.querySelector('.toast.show');
+        if (toastElement) {
+            var toast = new bootstrap.Toast(toastElement);
+            toast.show();
+        }
+
+        var confirmDeleteModal = document.getElementById('confirmDeleteModal');
+        var confirmDeleteButton = document.getElementById('confirmDeleteButton');
+        var contentModal = document.querySelector('.modal-body');
+        confirmDeleteModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget; // Thẻ <a> kích hoạt modal
+            var itemId = button.getAttribute('data-item-id');
+            var courseId = button.getAttribute('data-course-id');
+
+            // Cập nhật nội dung modal và href của nút xóa
+            confirmDeleteButton.href = `?handler=DeleteChapter&chapterId=${itemId}&courseId=${courseId}`;
+        });
+    });
+
+    document.getElementById('add_chapter-btn').addEventListener('click', function () {
+        // Lấy danh sách ul
+        const learningList = document.querySelector('.learning__list');
+
+        // Tạo phần tử li mới
+        const newQuestion = document.createElement('li');
+        newQuestion.classList.add('learning__item');
+        newQuestion.classList.add('learning__item-new');
+
+        // Lấy số thứ tự của chương, bao gồm cả chương hiện có và chương mới
+        let totalChapters = document.querySelectorAll('.learning__item').length; // Tính tất cả chương hiện có và chương mới
+        let preExistingChapters = document.querySelectorAll('.learning__item:not(.learning__item-new)').length;
+        console.log(preExistingChapters);
+        let newIndex = totalChapters;
+
+        // Tạo nội dung cho câu hỏi và các đáp án
+        newQuestion.innerHTML = `<div class="learning__chapter-panel learning__chapter-${newIndex}">
+                                                    <h2 class="learning__chapter-name d-flex align-items-center justify-content-between"
+                                                        style="width: 97.2%;">
+                                                        <span>${newIndex}.</span>
+                                                        <input type="text" class="learning_input-quiz learning_input-question"
+                                                                name="NewChapters[${newIndex - preExistingChapters}].Name" placeholder="Input chapter name...">
+                                                        <span class="remove_question-btn"><i class="fa-solid fa-delete-left"></i>
+                                                        </span>
+                                                    </h2>
+                                                    <span class="learning__chapter-progress">0/0 | 00:00</span>
+                                                </div>
+                                                <div class="learning__chapter-collapse">
+                                                    <div class="">
+                                                        <a class="learning__lesson-item learning_lesson-add text-decoration-none d-block fs-5 mb-0 text-white w-100"
+                                                                href="AddLession">Add more</a>
+                                                    </div>
+                                                </div>`;
+
+        // Thêm phần tử mới vào trước nút add_chapter-btn
+        learningList.insertBefore(newQuestion, document.getElementById('add_chapter-btn'));
+    });
+
+
+
+
+    function showListVideo() {
+        // Gắn sự kiện lên phần tử cha của tất cả các .learning__item
+        const learningList = document.querySelector('.learning__list');
+
+        learningList.addEventListener('click', function (e) {
+            // Kiểm tra nếu người dùng nhấn vào phần tử có class .learning__item
+            if (e.target.closest('.learning__item')) {
+                const chapterItem = e.target.closest('.learning__item');
+
+                // Kiểm tra nếu không phải là click vào phần tử con bên trong .learning__chapter-collapse
+                if (!e.target.closest('.learning__chapter-collapse')) {
+                    // Toggle class để mở hoặc đóng danh sách lesson
+                    chapterItem.classList.toggle('showListLesson');
+                }
+            }
+        });
+
+        // Ngăn chặn sự kiện nổi bọt khi nhấn vào phần tử trong .learning__chapter-collapse
+        learningList.addEventListener('click', function (e) {
+            if (e.target.closest('.learning__chapter-collapse')) {
+                // Ngăn chặn sự kiện nổi bọt
+                e.stopPropagation();
+            }
+        });
+    }
+
+    // Gọi hàm sau khi DOM đã tải
+    showListVideo();
+    function setReviewSuccess(value) {
+        document.getElementById('reviewSuccess').value = value;
+    }
+</script>

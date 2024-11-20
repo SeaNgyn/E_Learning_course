@@ -1,0 +1,25 @@
+﻿@page
+@model E_Learning_Course.WebApp.Pages.Authentication.ConfirmationEmailSentModel  
+@{
+    ViewData["Title"] = "Confirmation Email Sent";
+    Layout = "_Layout"; // Explicitly specify the shared layout
+}
+
+<div class="d-flex justify-content-center align-items-center vh-100">
+    <div class="card p-4 shadow" style="width: 500px;">
+        <h2 class="card-title text-center mb-4">@ViewData["Title"]</h2>
+        <div class="card-body">
+            <p class="text-center">
+                A confirmation email has been sent to your email address.
+                Please check your inbox to activate your account.
+            </p>
+            <div class="text-center mt-4">
+                <a asp-page="/Homepage/Index" class="btn btn-primary">Return to Home</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

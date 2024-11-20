@@ -1,0 +1,290 @@
+﻿@page
+@model E_Learning_Course.WebApp.Pages.Homepage.IndexModel
+@{
+    ViewData["Title"] = "Home page";
+    Layout = "_Layout";
+}
+
+<div id="banner" class="container">
+    <div class="swiper mySwiper">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide slide-one">
+                <div class="slide-left">
+                    <h2 class="slide-title">Học ReactJs miễn phí</h2>
+                    <p class="slide-des">
+                        Click on the download button to directly download all source code files of Responsive Drop Down Menu with Sub Menu.
+                    </p>
+                    <a href="#" class="slide-btn">Tìm hiểu thêm</a>
+                </div>
+                <div class="slide-right">
+                    <a href="#" target="_blank">
+                        <img src="~/img/Banner_01.png" class="slide-img" alt="ReactJS Course Banner">
+                    </a>
+                </div>
+            </div>
+            <div class="swiper-slide slide-two">
+                <div class="slide-left">
+                    <h2 class="slide-title">Thành Quả của Học Viên</h2>
+                    <p class="slide-des">
+                        Để đạt được kết quả tốt trong mọi việc ta cần xác định mục tiêu rõ ràng cho việc đó. Học lập trình cũng không là ngoại lệ.
+                    </p>
+                    <a href="#" class="slide-btn">Xem thành quả</a>
+                </div>
+                <div class="slide-right">
+                    <a href="#" target="_blank">
+                        <img src="~/img/Banner_02.png" class="slide-img" alt="Student Success Banner">
+                    </a>
+                </div>
+            </div>
+            <div class="swiper-slide slide-three">
+                <div class="slide-left">
+                    <h2 class="slide-title">TVCdev trên Youtube</h2>
+                    <p class="slide-des">
+                        TVCdev được nhắc tới ở mọi nơi, ở đâu có cơ hội việc làm cho nghề IT và có những con người yêu thích lập trình F8 sẽ ở đó.
+                    </p>
+                    <a href="#" class="slide-btn">Truy cập kênh</a>
+                </div>
+                <div class="slide-right">
+                    <a href="#" target="_blank">
+                        <img src="~/img/Banner_03.png" class="slide-img" alt="YouTube Channel Banner">
+                    </a>
+                </div>
+            </div>
+            <div class="swiper-slide slide-four">
+                <div class="slide-left">
+                    <h2 class="slide-title">TVCdev và cộng đồng lập trình</h2>
+                    <p class="slide-des">
+                        TVCdev được nhắc tới ở mọi nơi, ở đâu có cơ hội việc làm cho nghề IT và có những con người yêu thích lập trình F8 sẽ ở đó.
+                    </p>
+                    <a href="#" class="slide-btn">Truy cập Facebook</a>
+                </div>
+                <div class="slide-right">
+                    <a href="#" target="_blank">
+                        <img src="~/img/Banner_04.png" class="slide-img" alt="Community Banner">
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-pagination"></div>
+    </div>
+</div>
+
+<div id="content" class="container">
+    <div class="popular-courses">
+        <h2 class="courses-title">Pro courses</h2>
+        <div class="popular-header">
+            <p class="popular-des">Get the best course with the best price with world-class tutor</p>
+            <a href="/Homepage/ViewAllCourse"><button class="popular-button">View All Courses</button></a>
+        </div>
+        <div class="courses-container">
+            @if (Model.ProCourses != null && Model.ProCourses.Any())
+            {
+                foreach (var course in Model.ProCourses)
+                {
+                    <a class="courses-item" href="/Homepage/CourseDetail/@course.Id">
+                        <div class="courses-item__link">
+                            <img src="@course.Thumbnail" alt="@course.Title" />
+                            <div class="actionHover">
+                                <button class="courses-item__btn">Xem khóa học</button>
+                            </div>
+                        </div>
+                        <div class="course-info">
+                            <span class="course-info__type">@course.Category</span>
+                            <h3 class="course-info__name">@course.Title</h3>
+                            <div class="course-count">
+                                <div class="student-count">
+                                    <i class="fa-regular fa-user"></i>
+                                    <span>@course.Enrollments</span> <!-- Replace with dynamic data if available -->
+                                </div>
+                                <div class="star-count">
+                                    <i class="fa-solid fa-book"></i>
+                                    <span>@course.Lessons</span> <!-- Dynamic lesson count -->
+                                </div>
+                                <div class="price-count">
+                                    <i class="fa-solid fa-dollar-sign"></i>
+                                    <span>
+                                        @if (course.Price == 0)
+                                        {
+                                            <text>Miễn phí</text>
+                                        }
+                                        else
+                                        {
+                                            @course.Price.ToString("#,##0")
+                                        }
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                }
+            }
+            else
+            {
+                <p>No courses available at this time.</p>
+            }
+        </div>
+        <button class="popular-btn__more">More Course</button>
+    </div>
+    <div class="popular-courses">
+        <h2 class="courses-title">Popular courses for you</h2>
+        <div class="popular-header">
+            <p class="popular-des">Get the best course with the best price with world-class tutor</p>
+            <button class="popular-button">View All Courses</button>
+        </div>
+        <div class="courses-container">
+            @if (Model.Courses != null && Model.Courses.Any())
+            {
+                foreach (var course in Model.Courses)
+                {
+                    <a class="courses-item" href="/Homepage/CourseDetail/@course.Id">
+                        <div class="courses-item__link">
+                            <img src="@course.Thumbnail" alt="@course.Title" />
+                            <div class="actionHover">
+                                <button class="courses-item__btn">Xem khóa học</button>
+                            </div>
+                        </div>
+                        <div class="course-info">
+                            <span class="course-info__type">@course.Category</span>
+                            <h3 class="course-info__name">@course.Title</h3>
+                            <div class="course-count">
+                                <div class="student-count">
+                                    <i class="fa-regular fa-user"></i>
+                                    <span>@course.Enrollments</span> <!-- Replace with dynamic data if available -->
+                                </div>
+                                <div class="star-count">
+                                    <i class="fa-solid fa-book"></i>
+                                    <span>@course.Lessons</span> <!-- Dynamic lesson count -->
+                                </div>
+                                <div class="price-count">
+                                    <i class="fa-solid fa-dollar-sign"></i>
+                                    <span>
+                                        @if (course.Price == 0)
+                                        {
+                                            <text>Miễn phí</text>
+                                        }
+                                        else
+                                        {
+                                            @course.Price.ToString("#,##0")
+                                        }
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                }
+            }
+            else
+            {
+                <p>No courses available at this time.</p>
+            }
+        </div>
+        <button class="popular-btn__more">More Course</button>
+    </div>
+    <div class="popular-courses">
+        <h2 class="courses-title">Popular courses for you</h2>
+        <div class="popular-header">
+            <p class="popular-des">Get the best course with the best price with world-class tutor</p>
+            <button class="popular-button">View All Courses</button>
+        </div>
+        <div class="courses-container">
+            @if (Model.CoursesTrend != null && Model.CoursesTrend.Any())
+            {
+                foreach (var course in Model.CoursesTrend)
+                {
+                    <a class="courses-item" href="/Homepage/CourseDetail/@course.Id">
+                        <div class="courses-item__link">
+                            <img src="@course.Thumbnail" alt="@course.Title" />
+                            <div class="actionHover">
+                                <button class="courses-item__btn">Xem khóa học</button>
+                            </div>
+                        </div>
+                        <div class="course-info">
+                            <span class="course-info__type">@course.Category</span>
+                            <h3 class="course-info__name">@course.Title</h3>
+                            <div class="course-count">
+                                <div class="student-count">
+                                    <i class="fa-regular fa-user"></i>
+                                    <span>@course.Enrollments</span> <!-- Replace with dynamic data if available -->
+                                </div>
+                                <div class="star-count">
+                                    <i class="fa-solid fa-book"></i>
+                                    <span>@course.Lessons</span> <!-- Dynamic lesson count -->
+                                </div>
+                                <div class="price-count">
+                                    <i class="fa-solid fa-dollar-sign"></i>
+                                    <span>
+                                        @if (course.Price == 0)
+                                        {
+                                            <text>Miễn phí</text>
+                                        }
+                                        else
+                                        {
+                                            @course.Price.ToString("#,##0")
+                                        }
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                }
+            }
+            else
+            {
+                <p>No courses available at this time.</p>
+            }
+        </div>
+        <button class="popular-btn__more">More Course</button>
+    </div>
+
+    <div class="comments">
+        <div class="comment__header">
+            <h2 class="comment__header--title">What our students are saying about us</h2>
+            <p class="comment__header--desc">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                Porro eligendi asperiores laboriosam blanditiis facilis, aperiam voluptates officia qui
+                minima quis nihil deserunt, dicta ex! Quidem ea rem consequuntur rerum magni!
+            </p>
+        </div>
+        <div class="wrapper-comments">
+            <!-- Repeat comment-item as needed or bind dynamically -->
+            <div class="comment-item">
+                <h4 class="comment-item--great">Great platform</h4>
+                <div class="comment-body">
+                    <div class="comment-quotes">
+                        <i class="fa-solid fa-quote-right quotes-icon"></i>
+                    </div>
+                    <div class="comment-content">
+                        <div class="comment-text">
+                            <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit.</p>
+                        </div>
+                        <div class="comment-user">
+                            <img src="~/img/user1.jpg" alt="" class="comment-user__img">
+                            <div class="user-info">
+                                <span class="user-name">Kyle Mayars</span>
+                                <div class="user-rate">
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Add more comments here -->
+        </div>
+    </div>
+
+    <div class="newsletter">
+        <h2>Subscribe Newsletter</h2>
+        <p>You learn and each tomorrow. The roots of education are bitter, but the fruits are sweet.</p>
+        <div class="form-letter">
+            <input type="text" class="form-input" placeholder="Enter your Email Address" />
+            <button class="form-btn">Subscribe</button>
+        </div>
+    </div>
+</div>

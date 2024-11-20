@@ -1,0 +1,42 @@
+﻿@page
+@model E_Learning_Course.WebApp.Pages.Admin.Users.BanModel
+
+@{
+    Layout = "_ManagementLayout";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header text-white bg-danger">
+                    <h3>@(Model.IsBanned ? "Unban User" : "Ban User")</h3>
+                </div>
+                <div class="card-body">
+                    <p class="text-danger">
+                        @(Model.IsBanned
+                            ? "This user is currently banned. Would you like to unban them?"
+                            : "Once banned, the user will no longer have access to the platform.")
+                    </p>
+                    <div class="mb-3">
+                        <h4>User Information</h4>
+                        <p><strong>Name:</strong> @Model.User.UserName</p>
+                        <p><strong>Email:</strong> @Model.User.Email</p>
+                        <p><strong>Phone Number:</strong> @Model.User.PhoneNumber</p>
+                        <p><strong>Date of Birth:</strong> @Model.User.DateOfBirth</p>
+                    </div>
+
+                    <form method="post">
+                        <input type="hidden" name="UserId" value="@Model.UserId" />
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn @(Model.IsBanned ? "btn-success" : "btn-danger")">
+                                @(Model.IsBanned ? "Unban" : "Ban")
+                            </button>
+                            <a asp-page="./List" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

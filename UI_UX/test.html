@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transaction Table</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      padding: 20px;
+    }
+
+    .table thead th {
+      font-weight: bold;
+    }
+
+    .table td, .table th {
+      vertical-align: middle;
+    }
+
+    .table td.status-success {
+      color: #007bff;
+      font-weight: bold;
+    }
+
+    .table td.status-failed {
+      color: #ff4d4f;
+      font-weight: bold;
+    }
+
+    .table td a {
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    .table td a:hover {
+      text-decoration: underline;
+    }
+
+    .filter-section {
+      margin-bottom: 20px;
+    }
+
+    .filter-section .form-control {
+      width: auto;
+      display: inline-block;
+      margin-right: 10px;
+    }
+
+    .total-section {
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="filter-section">
+      <label> Từ ngày </label>
+      <input type="date" class="form-control" value="2022-09-06">
+      <label> Đến ngày </label>
+      <input type="date" class="form-control" value="2022-09-06">
+      <label> Trạng thái </label>
+      <select class="form-control">
+        <option>Tất cả</option>
+        <option>Thành công</option>
+        <option>Thất bại</option>
+      </select>
+      <input type="text" class="form-control" placeholder="Số đơn hàng">
+      <button class="btn btn-primary">Tìm kiếm</button>
+    </div>
+
+    <div class="total-section">
+      <span>Σ Tiền hàng: 1.000.000 đ</span> &nbsp;&nbsp;
+      <span>Σ Phí giao dịch: 0 đ</span> &nbsp;&nbsp;
+      <span>Σ Tiền thanh toán: 1.000.000 đ</span>
+    </div>
+
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Ngày tháng</th>
+          <th>Số đơn hàng</th>
+          <th>Tiền hàng</th>
+          <th>Khách hàng chịu phí</th>
+          <th>Tổng tiền thanh toán</th>
+          <th>Phí giao dịch</th>
+          <th>Trạng thái giao dịch</th>
+          <th>Mã giao dịch</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>10/05/2022 09:22:54</td>
+          <td>JPa27b4864299</td>
+          <td>500.000</td>
+          <td>-</td>
+          <td>500.000</td>
+          <td>-</td>
+          <td class="status-success">Hủy giao dịch</td>
+          <td><a href="#">JETPAY_20220510092254</a></td>
+        </tr>
+        <tr>
+          <td>10/05/2022 08:59:59</td>
+          <td>JPa3b24fb0299</td>
+          <td>50.000</td>
+          <td>-</td>
+          <td>50.000</td>
+          <td>-</td>
+          <td class="status-failed">Thất bại</td>
+          <td><a href="#">JETPAY_20220510085959</a></td>
+        </tr>
+        <tr>
+          <td>10/05/2022 08:43:16</td>
+          <td>JP86b04f50299</td>
+          <td>200.000</td>
+          <td>-</td>
+          <td>200.000</td>
+          <td>-</td>
+          <td class="status-failed">Thất bại</td>
+          <td><a href="#">JETPAY_20220510084316</a></td>
+        </tr>
+        <tr>
+          <td>10/05/2022 08:13:39</td>
+          <td>JP86b04f50299</td>
+          <td>200.000</td>
+          <td>-</td>
+          <td>200.000</td>
+          <td>-</td>
+          <td class="status-failed">Thất bại</td>
+          <td><a href="#">JETPAY_20220510081339</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</body>
+</html>

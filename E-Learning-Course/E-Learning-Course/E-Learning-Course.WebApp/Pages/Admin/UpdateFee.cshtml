@@ -1,0 +1,49 @@
+﻿@page
+@model E_Learning_Course.WebApp.Pages.Admin.UpdateFeeModel
+@{
+    Layout = "_ManagementLayout";
+}
+
+<div class="container mt-5">
+    <h2>Update Fee</h2>
+    <form method="post">
+        <!-- Month Dropdown -->
+        <div class="form-group">
+            <label for="Month">Month</label>
+            <select id="Month" name="Month" class="form-control">
+                @for (int i = 1; i <= 12; i++)
+                {
+                    <!option value="@i" @(i == Model.Month ? "selected" : "")>
+                        @System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i)
+                    </!option>
+                }
+            </select>
+        </div>
+
+        <!-- Year Dropdown -->
+        <div class="form-group">
+            <label for="Year">Year</label>
+            <select id="Year" name="Year" class="form-control">
+                @for (int year = DateTime.Now.Year; year >= 2000; year--)
+                {
+                    <!option value="@year" @(year == Model.Year ? "selected" : "")>@year</!option>
+                }
+            </select>
+        </div>
+
+        <!-- Fee Amount Field -->
+        <div class="form-group">
+            <label for="Fee">Fee Amount</label>
+            <input type="number" id="Fee" name="Fee" class="form-control" step="0.01" value="@Model.Fee" required />
+        </div>
+
+        <!-- Description Field -->
+        <div class="form-group">
+            <label for="Description">Description</label>
+            <textarea id="default" name="Description" class="form-control">@Model.Description</textarea>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary mt-3">Update Fee</button>
+    </form>
+</div>

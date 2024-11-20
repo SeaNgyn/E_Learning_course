@@ -1,0 +1,55 @@
+# Ignore build outputs
+bin/
+obj/
+
+# Ignore user-specific files
+*.user
+*.rsuser
+*.suo
+*.sln.docstates
+.vscode/
+
+# ASP.NET Scaffolding files
+.scaffolding
+
+# Ignore temporary files
+*.log
+*.tlog
+*.pdb
+
+# Ignore config and environment files
+appsettings*.json
+
+# Ignore front-end dependencies and files
+node_modules/
+wwwroot/lib/
+wwwroot/dist/
+wwwroot/bundle.js
+wwwroot/bundle.js.map
+
+# Ignore published outputs
+publish/
+out/
+
+# Ignore IDE/Editor specific files
+.vscode/
+.idea/
+*.code-workspace
+
+# Ignore backups
+*.bak
+*.orig
+E-Learning-Course/E-Learning-Course/.vs/E-Learning-COurse/v17/DocumentLayout.json
+E-Learning-Course/E-Learning-Course/.vs/E-Learning-COurse/v17/DocumentLayout.backup.json
+E-Learning-Course/E-Learning-Course/.vs/E-Learning-COurse/FileContentIndex/1d707811-0cbf-46cc-a5f6-4b32542632b4.vsidx
+E-Learning-Course/E-Learning-Course/.vs/E-Learning-COurse/DesignTimeBuild/.dtbcache.v2
+E-Learning-Course/E-Learning-Course/.vs/E-Learning-COurse/FileContentIndex/9d20396d-ec6c-446c-8f2a-7e17935ac0de.vsidx
+E-Learning-Course/E-Learning-Course/.vs/E-Learning-COurse/v17/.futdcache.v2
+E-Learning-Course/E-Learning-Course/.vs/ProjectEvaluation/e-learning-course.metadata.v9.bin
+E-Learning-Course/E-Learning-Course/.vs/ProjectEvaluation/e-learning-course.projects.v9.bin
+E-Learning-Course/E-Learning-Course/.vs/ProjectEvaluation/e-learning-course.strings.v9.bin
+E-Learning-Course/E-Learning-Course/.vs/E-Learning-COurse/FileContentIndex/0378c7ec-6bb2-45cc-977b-5e6d947b2713.vsidx
+E-Learning-Course/E-Learning-Course/.vs/E-Learning-COurse/FileContentIndex/466cc22a-941f-4bbb-bfe3-126bad2d66a5.vsidx
+E-Learning-Course/E-Learning-Course/.vs/E-Learning-COurse/FileContentIndex/febf8d99-62c7-4208-98b6-e3183974e55f.vsidx
+E-Learning-Course/E-Learning-Course/.vs/E-Learning-COurse/FileContentIndex/23587972-5c9f-4b70-89e8-8db0843d0499.vsidx
+E-Learning-Course/E-Learning-Course/.vs/E-Learning-COurse/FileContentIndex/04663bae-ca90-4c60-b118-78bbe8ab26d2.vsidx

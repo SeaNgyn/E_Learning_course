@@ -1,0 +1,63 @@
+﻿@page "{id:int}"
+@model E_Learning_Course.WebApp.Pages.Homepage.PaymentConfirmModel
+@{
+    Layout = "_Layout";
+}
+
+<div class="container mt-50 py-5">
+    <!-- Course Information -->
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header text-center bg-primary text-white">
+                    <h2>Complete Payment for</h2>
+                    <h3>@Model.Course.Title</h3>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h5><i class="fa-solid fa-book"></i> Course Description</h5>
+                            <p>@Html.Raw(Model.Course.Description)</p>
+                        </div>
+                        <img src="@Model.Course.Thumbnail" alt="@Model.Course.Title" class="img-fluid img-thumbnail" style="width: 200px; height: auto;">
+                    </div>
+                    @functions {
+                        public string ConvertToTimeFormat(double? duration)
+                        {
+                            if (duration == null || duration <= 0)
+                            {
+                                return "0 giờ 0 phút 0 giây";
+                            }
+
+                            TimeSpan time = TimeSpan.FromSeconds(duration.Value);
+
+                            return $"{(int)time.TotalHours} giờ {time.Minutes} phút {time.Seconds} giây";
+                        }
+                    }
+                    <div class="row">
+                        <div class="col-md-4 text-center">
+                            <i class="fa-solid fa-clock fa-2x text-primary"></i>
+                            <p><strong>Duration</strong></p>
+                            <p> @ConvertToTimeFormat(Model.Course.Durations)</p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <i class="fa-solid fa-book-open fa-2x text-primary"></i>
+                            <p><strong>Total Lessons</strong></p>
+                            <p>@Model.Course.Lessons lessons</p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <i class="fa-solid fa-dollar-sign fa-2x text-primary"></i>
+                            <p><strong>Price</strong></p>
+                            <p>@Model.Course.Price.ToString("#,##0") VND</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="@Model.Course.Url" class="btn btn-success btn-lg">
+                        <i class="fa-solid fa-credit-card"></i> Proceed to Payment
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

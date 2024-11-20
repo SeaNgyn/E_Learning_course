@@ -1,0 +1,101 @@
+﻿@page
+@model E_Learning_Course.WebApp.Pages.Admin.Users.CreateModel
+@{
+    Layout = "_ManagementLayout";
+}
+
+<div class="popular-courses">
+    <h2 class="courses-title mt-5 px-5">New staff</h2>
+    <div class="popular-header px-5">
+        <p class="popular-des">Làm khác để làm tốt</p>
+    </div>
+
+    <div class="container mt-5">
+        <div class="courses-container"></div>
+        <div class="courses-item learned-false index-1 ">
+            <div class="courses-item__link text-center rounded align-items-center d-flex justify-content-center bg-warning"
+                 style="background: rgb(0,15,36);
+                         background: linear-gradient(90deg, rgba(0,15,36,1) 0%, rgba(9,70,121,1) 35%, rgba(0,185,255,1) 100%);">
+                <img id="avatarPreview" style="width: 150px; height: 150px; border-radius: 50%;"
+                     src="https://toquoc.mediacdn.vn/thumb_w/640/280518851207290880/2023/8/16/edit-tran-thanh-52-1690739022305120762278-1692174636689804977687.png"
+                     alt="Avatar Preview">
+            </div>
+            <div class="course-info">
+                <h2>Nhân viên</h2>
+
+                <h3 style="color:red">@Model.Mess</h3>
+                @* Thông báo thành công hoặc lỗi *@
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <form method="post" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="userName" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="userName" asp-for="User.UserName" placeholder="Enter your username">
+                        <span asp-validation-for="User.UserName" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" asp-for="User.Email" placeholder="Enter your email address">
+                        <span asp-validation-for="User.Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="phoneNumber" class="form-label">Phone Number</label>
+                        <input type="text" class="form-control" id="phoneNumber" asp-for="User.PhoneNumber" placeholder="Enter your phone number">
+                        <span asp-validation-for="User.PhoneNumber" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label for="dateOfBirth" class="form-label">Date of Birth</label>
+                        <input type="date" class="form-control" id="dateOfBirth" asp-for="User.DateOfBirth">
+                        <span asp-validation-for="User.DateOfBirth" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label for="role" class="form-label">Role</label>
+                        <select class="form-control" id="role" asp-for="User.SelectedRole">
+                            <option value="">Select a role</option>
+                            @foreach (var role in Model.Roles)
+                            {
+                                <option value="@role.Value">@role.Text</option>
+                            }
+                        </select>
+                        <span asp-validation-for="User.SelectedRole" class="text-danger"></span>
+                    </div>
+
+
+                    @* Input for uploading avatar *@
+                    <div class="mb-3">
+                        <label for="avatar" class="form-label">Avatar</label>
+                        <input type="file" class="form-control" id="avatar" asp-for="User.Avatar" accept="image/*" onchange="previewAvatar(event)">
+                        <span asp-validation-for="User.Avatar" class="text-danger"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-signin">Add new</button>
+                </form>
+
+                @* Hiển thị thông báo thành công *@
+                @if (ViewData.ModelState.ContainsKey("") && ViewData.ModelState[""].Errors.Count > 0)
+                {
+                    <div class="alert alert-success mt-3">
+                        @ViewData.ModelState[""].Errors[0].ErrorMessage
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function previewAvatar(event) {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+            const imgElement = document.getElementById('avatarPreview');
+            imgElement.src = e.target.result; // Set the src of the image to the file's result
+        }
+
+        if (file) {
+            reader.readAsDataURL(file); // Read the file as a data URL
+        }
+    }
+</script>

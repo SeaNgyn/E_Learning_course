@@ -1,0 +1,157 @@
+﻿@page
+@model E_Learning_Course.WebApp.Pages.Admin.Courses.ListModel
+@{
+    Layout = "_ManagementLayout";
+}
+<div class="popular-courses">
+    <h2 class="courses-title mt-5 px-5">Điều hành khóa học</h2>
+    <div class="popular-header px-5">
+        <p class="popular-des">Học sáng tạo, thành công vượt trội</p>
+        <a class="popular-button text-decoration-none" href="Create">Add course</a>
+    </div>
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+    <div class="row mt-4 px-5">
+        <div class="col-6 d-flex align-items-center">
+            <span class="fs-3 me-3">Show</span>
+            <select class="drop-show_number" id="pageSize" asp-for="PageSize" options="@Model.PageSize" onchange="submitForm()">
+                   <option value="5">5</option>
+                   <option value="10">10</option>
+                   <option value="15">15</option>
+            </select>
+            <span class="fs-3 ms-3">Course</span>
+        </div>
+        <div class="col-6">
+            <div class="d-flex align-items-center justify-content-end">
+                <div class="">
+                    <div class="sort-btn_manager">
+                        <span class="sort-title">Sort by</span>
+                        <i class="fa-solid fa-sort"></i>
+                        <div class="sort_fields">
+                            <ul>
+                                <li>
+                                    <input type="radio" name="sortBy" asp-for="@Model.CurrentSort" id="nameAsc" value="name|asc" onclick="submitForm()" />
+                                    <label for="nameAsc"><span>Name asc</span></label>
+                                </li>
+                                <li>
+                                    <input type="radio" name="sortBy" asp-for="@Model.CurrentSort" id="nameDesc" value="name|desc" onclick="submitForm()" />
+                                    <label for="nameDesc"><span>Name desc</span></label>
+                                </li>
+                                <li>
+                                    <input type="radio" name="sortBy" asp-for="@Model.CurrentSort" id="priceAsc" value="price|asc" onclick="submitForm()" />
+                                    <label for="priceAsc"><span>Price asc</span></label>
+                                </li>
+                                 <li>
+                                    <input type="radio" name="sortBy" asp-for="@Model.CurrentSort" id="priceDesc" value="price|desc" onclick="submitForm()" />
+                                    <label for="priceDesc"><span>Price desc</span></label>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="filter-category">
+                        <span class="filter-title">Filter by Category</span>
+                        <select asp-for="@Model.CategoryId" id="categoryFilter" onchange="submitForm()">
+                            <option value="">All Categories</option>
+                            @foreach (var category in Model.Categories)
+                            {
+                                <option value="@category.Id">@category.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="">
+                    <!-- <div class="filter-btn_manager">
+                        <span class="filter-title">Filter</span>
+                        <i class="fa-solid fa-filter"></i>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container mt-5">
+        <div class="courses-container">
+            @foreach (var course in Model.PagedCourses)
+            {
+                <a class="courses-item text-decoration-none learned-false index-1" href="/Admin/Courses/Detail/@course.Id">
+                <div class="courses-item__link">
+                     <img src="@course.Thumbnail" alt="Course Thumbnail" style="height: 200px;" />
+                    <div class="actionHover">
+                        <button class="courses-item__btn" data-course-index="1">Xem khóa học</button>
+                    </div>
+                </div>
+                <div class="course-info">
+                        <span class="course-info__type">@course.Category.Name</span>
+                    <h3 class="course-info__name">
+                            @course.Title
+                    </h3>
+                    <div class="course-count">
+                        <div class="student-count">
+                            <i class="fa-regular fa-user"></i>
+                            <span>500K</span>
+                        </div>
+                        <div class="price-count">
+                            <i class="fa-solid fa-dollar-sign"></i>
+                                <span>@course.Price.ToString("#,##0")</span>
+                        </div>
+                    </div>
+                </div>
+            </a>
+            }
+        </div>
+
+        <div class="">
+           No <h3>@Model.PageNo</h3>
+           Size <h3>@Model.PageSize</h3>
+            Total PAGE <h3>@Model.TotalPage</h3>
+            <ul class="d-flex align-items-center pagination">
+                @if (Model.PageNo > 1)
+                {
+                    <li class="pagination-btn">
+                        <a class="d-block" asp-route-pageNo="@(Model.PagedCourses.PageNumber - 1)" asp-route-sortBy="@Model.CurrentSort" asp-route-searchTxt="@Model.CurrentFilter" asp-route-categoryId="@Model.CategoryId">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </a>
+                    </li>
+                }
+                @for (int i = 1; i <= Model.PagedCourses.PageCount; i++)
+                {
+                    <li class="pagination-btn">
+                        <a class="d-block" asp-route-pageNo="@i" asp-route-sortBy="@Model.CurrentSort" asp-route-searchTxt="@Model.CurrentFilter" asp-route-categoryId="@Model.CategoryId">@i</a>
+                    </li>
+                }
+                @if (Model.PageNo < Model.TotalPage)
+                {
+                    <li class="pagination-btn">
+                        <a class="d-block" asp-route-pageNo="@(Model.PagedCourses.PageNumber + 1)" asp-route-sortBy="@Model.CurrentSort" asp-route-searchTxt="@Model.CurrentFilter" asp-route-categoryId="@Model.CategoryId">
+                            
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>
+<script>
+    function submitForm() {
+        const pageSize = document.getElementById('pageSize').value;
+        const sortBy = document.querySelector('input[name="sortBy"]:checked')?.value;
+        const searchTxt = document.querySelector('input[name="searchTxt"]').value;
+        const category = document.getElementById('categoryFilter').value;
+        const queryString = new URLSearchParams({
+            pageSize: pageSize,
+            sortBy: sortBy || "",
+            searchTxt: searchTxt,
+            categoryId: category
+        }).toString();
+
+        window.location.href = `?${queryString}`;
+    }
+    let searchBtn = document.getElementById('searchBtn');
+    searchBtn.addEventListener('click', () => {
+        submitForm()
+    });
+</script>

@@ -1,0 +1,191 @@
+﻿@page
+@model E_Learning_Course.WebApp.Pages.Admin.Users.ListModel
+@{
+    Layout = "_ManagementLayout";
+
+}
+<div class="popular-courses">
+    <h2 class="courses-title mt-5 px-5">Điều hành nhân sự</h2>
+    <div class="popular-header px-5">
+        <p class="popular-des">Làm khác để làm tốt</p>
+        <!-- <button class="popular-button">See All jobs</button> -->
+        <a href="./Create"><button class="popular-button">Add staff</button></a>
+    </div>
+    <div class="row mt-4 px-5">
+        <div class="col-6 d-flex align-items-center">
+            <span class="fs-3 me-3">Show</span>
+            <select class="drop-show_number" id="pageSize" asp-for="PageSize" options="@Model.PageSize" onchange="submitForm()">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+            </select>
+            <span class="fs-3 ms-3">People of </span>
+
+            <span class="fs-3 me-3"></span>
+            <select class="drop-show_number" id="roleUser" asp-for="RoleUser" onchange="submitForm()">
+                <option value="">All Roles</option>
+                @foreach (var role in Model.RoleList)
+                {
+                    <option value="@role">@role</option>
+                }
+            </select>
+        </div>
+
+        <div class="col-6">
+            <div class="d-flex align-items-center justify-content-end">
+                <div class="">
+                    <div class="sort-btn_manager">
+                        <span class="sort-title">Sort by</span>
+                        <i class="fa-solid fa-sort"></i>
+                        <div class="sort_fields">
+                            <ul>
+                                <li>
+                                    <input type="radio" name="sortBy" asp-for="@Model.CurrentSort" id="nameAsc" value="name|asc" onclick="submitForm()" />
+                                    <label for="nameAsc"><span>Name asc</span></label>
+                                </li>
+                                <li>
+                                    <input type="radio" name="sortBy" asp-for="@Model.CurrentSort" id="nameDesc" value="name|desc" onclick="submitForm()" />
+                                    <label for="nameDesc"><span>Name desc</span></label>
+                                </li>
+
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="">
+                    <!-- <div class="filter-btn_manager">
+                        <span class="filter-title">Filter</span>
+                        <i class="fa-solid fa-filter"></i>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container mt-5">
+        
+        <div class="courses-container">
+            @foreach (var user in Model.PagedUsers)
+            {
+                <div class="courses-item learned-false index-1 ">
+                    <div class="courses-item__link text-center rounded align-items-center d-flex justify-content-center bg-warning"
+                         style="background: rgb(0,15,36);
+background: linear-gradient(90deg, rgba(0,15,36,1) 0%, rgba(9,70,121,1) 35%, rgba(0,185,255,1) 100%);">
+                        <img style="width: 150px; height: 150px; border-radius: 50%;"
+                             src="@user.Avatar"
+                             alt="">
+                        <div class="actionHover">
+                            <button class="courses-item__btn" data-course-index="1">Xem khóa học</button>
+                        </div>
+                    </div>
+                    <div class="course-info">
+                        <span class="course-info__type"> @await Model.GetUserRoleAsync(user)</span>
+                        <h3 class="course-info__name fs-3 h-auto">
+                            <span class="fw-bold">Name:</span> @user.UserName
+                        </h3>
+                        <h3 class="course-info__name fs-5 mt-1 h-auto">
+                            <span style="color: @(user.Status == 1 ? "green" : "red")">
+                                <i class="fa-solid fa-circle"></i> @(user.Status == 1 ? "Active" : "Deactive")
+                            </span>
+                        </h3>
+                        <div class="course-count">
+                            <div class="student-count">
+                                <i class="fa-solid fa-clapperboard"></i>
+                                <span></span>
+                            </div>
+                            <a asp-page="./Update" asp-route-id="@user.Id" class="star-count">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                                <span>Edit</span>
+                            </a>
+                            <a asp-page="./Ban" asp-route-id="@user.Id" class="price-count">
+                                <i class="fa-solid fa-trash"></i>
+                                <span>@(user.Status == 1 ? "Ban" : "Unban")</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+
+        </div>
+        <div class="">
+            
+            <ul class="d-flex align-items-center pagination">
+                @if (Model.PageNo > 1)
+                {
+                    <li class="pagination-btn">
+                        <a class="d-block" asp-route-pageNo="@(Model.PagedUsers.PageNumber - 1)" asp-route-sortBy="@Model.CurrentSort" asp-route-searchTxt="@Model.CurrentFilter">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </a>
+                    </li>
+                }
+                @for (int i = 1; i <= Model.PagedUsers.PageCount; i++)
+                {
+                    <li class="pagination-btn">
+                        <a class="d-block" asp-route-pageNo="@i" asp-route-sortBy="@Model.CurrentSort" asp-route-searchTxt="@Model.CurrentFilter">@i</a>
+                    </li>
+                }
+                @if (Model.PageNo < Model.TotalPage)
+                {
+                    <li class="pagination-btn">
+                        <a class="d-block" asp-route-pageNo="@(Model.PagedUsers.PageNumber + 1)" asp-route-sortBy="@Model.CurrentSort" asp-route-searchTxt="@Model.CurrentFilter">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // Hàm để cập nhật giá trị URL khi bấm Submit
+    function submitForm() {
+        // Lấy URL hiện tại và các tham số trong URL
+        const urlParams = new URLSearchParams(window.location.search);
+
+        // Lấy các giá trị của pageSize, roleUser, sortBy từ DOM
+        const pageSize = document.getElementById('pageSize').value || urlParams.get("pageSize") || "";
+        const roleUser = document.getElementById('roleUser')?.value || urlParams.get("") || "";
+        const sortBy = document.querySelector('input[name="sortBy"]:checked')?.value || urlParams.get("sortBy") || "";
+        const searchTxt = document.getElementById('searchTxt')?.value || urlParams.get("searchTxt") || "";
+
+        // Cập nhật URL với các tham số mới hoặc giữ nguyên nếu không có thay đổi
+        const queryString = new URLSearchParams({
+            pageSize: pageSize,
+            roleUser: roleUser,
+            sortBy: sortBy,
+            searchTxt: searchTxt
+        }).toString();
+
+        // Chuyển hướng tới URL mới với query string cập nhật
+        window.location.href = `?${queryString}`;
+    }
+
+    // Hàm để xóa giá trị tìm kiếm khi nhấn vào nút "X"
+    // function clearSearch() {
+    //     document.querySelector('input[name="searchTxt"]').value = ''; // Xóa giá trị tìm kiếm
+    //     submitForm(); // Gọi lại submitForm để cập nhật URL mà không gửi lại form
+    // }
+
+    // Lắng nghe sự kiện change cho các thành phần
+    document.getElementById('pageSize').addEventListener('change', submitForm);
+    document.querySelector('.search-button').addEventListener('click', (event) => {
+        event.preventDefault();
+        submitForm();
+    });
+    document.getElementById('roleUser').addEventListener('change', submitForm); // Lắng nghe sự kiện thay đổi roleUser
+    document.querySelectorAll('input[name="sortBy"]').forEach(radio => {
+        radio.addEventListener('change', submitForm);  // Lắng nghe sự kiện thay đổi của các radio button sortBy
+    });
+
+    // Thêm sự kiện click cho các radio button của sortBy
+    document.querySelectorAll('input[name="sortBy"]').forEach(radio => {
+        radio.addEventListener('click', submitForm);
+    });
+</script>
+
+
+
+
+

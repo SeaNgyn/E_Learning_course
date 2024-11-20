@@ -1,0 +1,100 @@
+﻿@page
+@model E_Learning_Course.WebApp.Pages.Admin.Discounts.ListModel
+@{
+    Layout = "_ManagementLayout";
+}
+
+<div class="popular-courses">
+    <h2 class="courses-title mt-5 px-5">Mã giảm giá</h2>
+    <div class="popular-header px-5">
+        <p class="popular-des">Làm khác để làm tốt</p>
+        <a href="Create"><button class="popular-button">Add tickets</button></a>
+    </div>
+    <div class="container mt-5">
+        <div class="courses-container">
+            @foreach (var d in Model.PagedDiscount)
+            {
+                <div class="courses-item learned-false index-1">
+                    <div class="courses-item__link text-center rounded align-items-center d-flex justify-content-center bg-warning"
+                         style="background: rgb(0,15,36);
+background: linear-gradient(90deg, rgba(0,15,36,1) 0%, rgba(9,70,121,1) 35%, rgba(0,185,255,1) 100%);">
+                        <img style="width: 150px; height: 150px; border-radius: 50%;"
+                             src="https://as2.ftcdn.net/v2/jpg/01/97/67/67/1000_F_197676737_JVN4qUHQ9ODSKEQcO1wwGdIaHuGt77BG.jpg"
+                             alt="">
+                        <div class="actionHover">
+                            <button class="courses-item__btn" data-course-index="1">Xem khóa học</button>
+                        </div>
+                    </div>
+                    <div class="course-info">
+                        <h3 class="course-info__name fs-3 h-auto"><span class="fw-bold">Discount:</span> @d.DiscountPer%</h3>
+                        <p><strong>Code:</strong> @d.Code</p>
+                        <p><strong>Max Uses:</strong> @d.MaxUses</p>
+                        <p><strong>Start Date:</strong> @d.StartDate?.ToString("yyyy-MM-dd")</p>
+                        <p><strong>End Date:</strong> @d.EndDate?.ToString("yyyy-MM-dd")</p>
+                        <div class="course-count">
+                            <div class="student-count">
+                                <i class="fa-solid fa-ticket-alt"></i>
+                                <span>Uses: 10/@d.MaxUses</span>
+                            </div>
+                            <a asp-page="./Update" asp-route-id="@d.Id" class="star-count">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                                <span>Edit</span>
+                            </a>
+                            <a asp-page="./Delete" asp-route-id="@d.Id" class="star-count">
+                                <i class="fa-solid fa-trash"></i>
+                                <span>Delete</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="pagination-container mt-4">
+            <ul class="d-flex align-items-center pagination">
+                @if (Model.PageNo > 1)
+                {
+                    <li class="pagination-btn">
+                        <a class="d-block" asp-route-pageNo="@(Model.PageNo - 1)" asp-route-sortBy="@Model.CurrentSort" asp-route-searchTxt="@Model.CurrentFilter">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </a>
+                    </li>
+                }
+                @for (int i = 1; i <= Model.TotalPage; i++)
+                {
+                    <li class="pagination-btn">
+                        <a class="d-block" asp-route-pageNo="@i" asp-route-sortBy="@Model.CurrentSort" asp-route-searchTxt="@Model.CurrentFilter">@i</a>
+                    </li>
+                }
+                @if (Model.PageNo < Model.TotalPage)
+                {
+                    <li class="pagination-btn">
+                        <a class="d-block" asp-route-pageNo="@(Model.PageNo + 1)" asp-route-sortBy="@Model.CurrentSort" asp-route-searchTxt="@Model.CurrentFilter">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function submitForm() {
+        const pageSize = document.getElementById('pageSize').value;
+        const sortBy = document.querySelector('input[name="sortBy"]:checked')?.value;
+        const searchTxt = document.querySelector('input[name="searchTxt"]').value;
+        const queryString = new URLSearchParams({
+            pageSize: pageSize,
+            sortBy: sortBy || "",
+            searchTxt: searchTxt
+        }).toString();
+
+        window.location.href = `?${queryString}`;
+    }
+    let searchBtn = document.getElementById('searchBtn');
+    searchBtn.addEventListener('click', () => {
+        submitForm()
+    });
+</script>

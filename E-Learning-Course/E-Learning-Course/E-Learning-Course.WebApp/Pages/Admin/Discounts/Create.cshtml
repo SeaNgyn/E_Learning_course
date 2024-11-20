@@ -1,0 +1,108 @@
+﻿@page
+@model E_Learning_Course.WebApp.Pages.Admin.Discounts.CreateModel
+@{
+    Layout = "_ManagementLayout";
+}
+<div class="popular-courses">
+    <h2 class="courses-title mt-5 px-5">New tickets</h2>
+    <div class="popular-header px-5">
+        <p class="popular-des">Làm khác để làm tốt</p>
+        <!-- <button class="popular-button">See All jobs</button> -->
+    </div>
+
+    <div class="container mt-5">
+        <div class="courses-container"></div>
+        <div class="courses-item learned-false index-1 ">
+            <div class="courses-item__link text-center rounded align-items-center d-flex justify-content-center bg-warning"
+                 style="background: rgb(0,15,36);
+background: linear-gradient(90deg, rgba(0,15,36,1) 0%, rgba(9,70,121,1) 35%, rgba(0,185,255,1) 100%);">
+                <img style="width: 150px; height: 150px; border-radius: 50%;"
+                     src="https://as2.ftcdn.net/v2/jpg/01/97/67/67/1000_F_197676737_JVN4qUHQ9ODSKEQcO1wwGdIaHuGt77BG.jpg"
+                     alt="">
+            </div>
+            <div class="course-info">
+                <h2>Mã giảm giá</h2>
+                <h2>
+                    @Model.Mess
+                </h2>
+                <form id="createForm" method="post" style="margin: 20px;">
+                    <div class="form-group">
+                        <label asp-for="Discount.Code">Mã giảm giá:</label>
+                        <input asp-for="Discount.Code" class="form-control" maxlength="50" placeholder="Nhập mã giảm giá" />
+                        <span asp-validation-for="Discount.Code" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Discount.CourseName">Khóa học:</label>
+                        <select asp-for="Discount.CourseName" class="form-control">
+                            <option value="" disabled selected>Chọn khóa học</option>
+                            @foreach (var course in Model.Courses)
+                            {
+                                <option value="@course.Id">@course.Title</option>
+                            }
+                        </select>
+                        <span asp-validation-for="Discount.CourseName" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Discount.DiscountPer">Giảm giá (%):</label>
+                        <input asp-for="Discount.DiscountPer" type="number" min="0" max="100" class="form-control" placeholder="Nhập phần trăm giảm giá" />
+                        <span asp-validation-for="Discount.DiscountPer" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Discount.MaxUses">Số lần sử dụng tối đa:</label>
+                        <input asp-for="Discount.MaxUses" type="number" min="1" class="form-control" placeholder="Nhập số lần sử dụng tối đa" />
+                        <span asp-validation-for="Discount.MaxUses" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Discount.StartDate">Ngày bắt đầu:</label>
+                        <input asp-for="Discount.StartDate" type="date" class="form-control" required />
+                        <span asp-validation-for="Discount.StartDate" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Discount.EndDate">Ngày kết thúc:</label>
+                        <input asp-for="Discount.EndDate" type="date" class="form-control" required />
+                        <span asp-validation-for="Discount.EndDate" class="text-danger"></span>
+                    </div>
+
+                    <button type="submit" class="submit-btn">Lưu thay đổi</button>
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $('#createForm').on('submit', function (event) {
+                event.preventDefault();
+
+                $('#spinner').show();
+
+                $('#successMessage').hide();
+
+                $.ajax({
+                    type: 'POST',
+                    url: "AddCourse",
+                    data: $(this).serialize(),
+                    success: function (response) {
+                        $('#spinner').hide();
+
+                        $('#successMessage').show();
+                    },
+                    error: function (xhr, status, error) {
+                        // Xử lý lỗi
+                        console.log("Lỗi: " + error);
+                    }
+                });
+            });
+        });
+    </script>
+
+
+
+</div>
